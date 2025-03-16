@@ -28,7 +28,6 @@ class GrafoLista(Grafos):
         else:
             print("Grafo Lista ainda não possui vértices!")
 
-
     def inserirAresta(self, label_origem : str, label_destino : str, peso : int = 1, ) -> bool:
         if not any(vertice["label"] == label_origem for vertice in self.grafo_lista):
             print("O Vértice origem não existe.")
@@ -38,35 +37,54 @@ class GrafoLista(Grafos):
             print("O Vértice destino não existe.")
             return False
         
-        if self.ponderado:       #Tratativa para arestas ponderadas
-            zero = 0
-            if self.direcionado: #Tratativa para grafo direcionado
-                zero = 0
-            else:                #Tratativa para grafo não direcionado
-                zero = 0
-        else:                    #Tratativa para arestas não ponderadas
-            
-            if self.direcionado: #Tratativa para grafo direcionado
-                zero = 0
-            else:                #Tratativa para grafo não direcionado
-                zero = 0
+        if any((aresta["origem"] == label_origem) and (aresta["destino"] == label_destino) for aresta in self.arestas):
+            print("Aresta com origem e destino escolhidos já existem!")
+            return False
+        else:
+            if self.ponderado:              #Se o grafo for ponderado
+                if self.direcionado:        #Se o grafo for direcionado
+                    self.arestas.append({"origem": label_origem, "destino": label_destino, "peso": peso})
+                else:                       #Se o grafo for não direcionado
+                    self.arestas.append({"origem": label_origem, "destino": label_destino, "peso": peso})
+                    self.arestas.append({"origem": label_destino, "destino": label_origem, "peso": peso})
+            else:                           #Se o grafo não for ponderado
+                if self.direcionado:        #Se o grafo for direcionado
+                    self.arestas.append({"origem": label_origem, "destino": label_destino})
+                else:                       #Se o grafo for não direcionado
+                    self.arestas.append({"origem": label_origem, "destino": label_destino})
+                    self.arestas.append({"origem": label_destino, "destino": label_origem})
+            return True
+
+    def removerVertice(self, indice : int) -> bool:
+        if len(grafo_lista) < indice:
+            print("Vértice não existe nesse índice! OBS: indexado a partir de 0")
+            return False
 
     def removerAresta():
         zero = 0
 
-    def existeAresta():
-        zero = 0
+    def existeAresta(self, origem : int, destino : int):
+        if any((aresta["origem"] == origem) and (aresta["destino"] == destino) for aresta in self.arestas):
+            print("Aresta com origem e destino escolhidos existem!")
+            return True
+        else:
+            print("Aresta com origem e destino escolhidos não existem!")
 
     def pesoAresta():
         zero = 0
 
+    def retornarVizinhos():#self, int vertice (Achop que é o indice do vertice, seria massa se desse pra colocar o )
+        zero = 0
+        
 class GrafoMatriz(Grafos):
     def _init__(self, direcionado, ponderado):
         super().__init__(direcionado, ponderado)
         grafo_matriz = [[]]
 
-grafo_lista = GrafoLista(ponderado=False, direcionado=False)
+grafo_lista = GrafoLista(ponderado=False, direcionado=True)
 grafo_lista.inserirVertice("A")
 grafo_lista.inserirVertice("B")
-grafo_lista.inserirVertice("A")
+grafo_lista.inserirAresta("A", "B")
 grafo_lista.imprimeGrafo()
+grafo_lista.existeAresta("A", "B")
+grafo_lista.existeAresta("B", "A")
