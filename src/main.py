@@ -8,7 +8,7 @@ class GrafoLista(Grafos):
     def __init__(self, direcionado, ponderado):
         super().__init__(direcionado, ponderado)
         self.grafo_lista = []
-        self.grafo_lista_arestas = []
+        self.arestas = []
 
     def inserirVertice(self, label : str) -> bool:
         is_vertice_existente = False
@@ -29,8 +29,27 @@ class GrafoLista(Grafos):
             print("Grafo Lista ainda não possui vértices!")
 
 
-    def inserirAresta(label_origem : str, label_destino : str, peso : int = 1, ) -> bool:
-        zero = 0
+    def inserirAresta(self, label_origem : str, label_destino : str, peso : int = 1, ) -> bool:
+        if not any(vertice["label"] == label_origem for vertice in self.grafo_lista):
+            print("O Vértice origem não existe.")
+            return False
+    
+        if not any(vertice["label"] == label_destino for vertice in self.grafo_lista):
+            print("O Vértice destino não existe.")
+            return False
+        
+        if self.ponderado:       #Tratativa para arestas ponderadas
+            zero = 0
+            if self.direcionado: #Tratativa para grafo direcionado
+                zero = 0
+            else:                #Tratativa para grafo não direcionado
+                zero = 0
+        else:                    #Tratativa para arestas não ponderadas
+            
+            if self.direcionado: #Tratativa para grafo direcionado
+                zero = 0
+            else:                #Tratativa para grafo não direcionado
+                zero = 0
 
     def removerAresta():
         zero = 0
