@@ -1,6 +1,7 @@
 TO_DO = '''
-REVISAR FUNÇÕES DE REMOVER
+REVISAR FUNÇÕES DE REMOVER  - removerVertice
 IMPLEMENTAR RETORNAR_VIZINHOS
+AO IMPRIMIR GRAFO DEVE-SE MOSTRAR OS VIZINHOS e peso em caso de ponderado
 '''
 
 RED = "\033[91m"  # Vermelho
@@ -41,6 +42,7 @@ class GrafoLista(Grafos):
             print()
             for i in range(len(self.grafo_lista)):
                 print(f'Grafo na posição {i}, label: {self.grafo_lista[i]["label"]}')
+            print()
         else:
             print("Grafo Lista ainda não possui vértices!")
 
@@ -80,11 +82,10 @@ class GrafoLista(Grafos):
 
     def removerVertice(self, indice : int) -> bool:
         try:
-            label_origem_indice_a_ser_excluido = self.grafo_lista[indice]["origem"]
-            label_destino_indice_a_ser_excluido =  self.grafo_lista[indice]["destino"]
+            label_indice_a_ser_excluido = self.labelVertice(indice)
             for i, aresta in enumerate(self.arestas):
-                if (aresta["origem"] == label_origem_indice_a_ser_excluido) and (aresta["destino"] == label_destino_indice_a_ser_excluido):
-                    self.arestas.pop(indice) 
+                if (aresta["origem"] == label_indice_a_ser_excluido or aresta["destino"] == label_indice_a_ser_excluido):
+                    self.arestas.pop(i) 
                     #print(f"indice {i}, arestas:  {aresta}")
             self.grafo_lista.pop(indice)
             print(f"{GREEN}Vértice (e arestas associadas) com índice correspondente removida. {RESET}")
@@ -103,7 +104,7 @@ class GrafoLista(Grafos):
                 print(f"{GREEN}Aresta com índice {indice} removida. {RESET}")
                 return True
             else:
-                Tem que ser levado em conta que ao remover uma aresta não direcional, se quebra as remvove as duas arestas criadas
+                zero = 0 #Tem que ser levado em conta que ao remover uma aresta não direcional, se quebra as remvove as duas arestas criadas
         except IndexError:
             print(f"{RED}Aresta com índice não existente. {RESET}")
             return False
@@ -154,26 +155,19 @@ grafo_lista.labelVertice(1)
 grafo_lista.inserirVertice("A")
 grafo_lista.inserirVertice("B")
 grafo_lista.inserirVertice("C")
-grafo_lista.inserirVertice("D")
-grafo_lista.inserirVertice("E")
 grafo_lista.inserirAresta("A", "A", 2.0) #0
-grafo_lista.inserirAresta("A", "A", 2.0)
 grafo_lista.inserirAresta("A", "B", 2.0) #1
 grafo_lista.inserirAresta("C", "A", 5.2) #2
-grafo_lista.inserirAresta("D", "E", 2.0) #3
-grafo_lista.inserirAresta("C", "Z", 2.0) #Nao existe label Z
-grafo_lista.inserirAresta("D", "E", 2.0) 
+grafo_lista.inserirAresta("C", "B", 1.25) #2
 print(grafo_lista.arestas)
-grafo_lista.removerAresta(3)
-print(grafo_lista.arestas)
-print(grafo_lista.existeAresta(3, 4))
-grafo_lista.existeAresta("D", "E")
+grafo_lista.imprimeGrafo()
+grafo_lista.removerVertice(0)
+grafo_lista.imprimeGrafo()
 
-# grafo_lista.existeAresta("B", "A")
 
-res = grafo_lista.pesoAresta(0, 1)
-print(f'Resultado: vai de {grafo_lista.grafo_lista[0]["label"]} a {grafo_lista.grafo_lista[1]["label"]} peso = {res} ')
-res = grafo_lista.pesoAresta(2, 0)
-print(f'Resultado: vai de {grafo_lista.grafo_lista[2]["label"]} a {grafo_lista.grafo_lista[0]["label"]} peso = {res}')
-res = grafo_lista.pesoAresta(0, 2)
-print(f'Resultado: vai de {grafo_lista.grafo_lista[0]["label"]} a {grafo_lista.grafo_lista[2]["label"]} peso = {res}')
+# res = grafo_lista.pesoAresta(0, 1)
+# print(f'Resultado: vai de {grafo_lista.grafo_lista[0]["label"]} a {grafo_lista.grafo_lista[1]["label"]} peso = {res} ')
+# res = grafo_lista.pesoAresta(2, 0)
+# print(f'Resultado: vai de {grafo_lista.grafo_lista[2]["label"]} a {grafo_lista.grafo_lista[0]["label"]} peso = {res}')
+# res = grafo_lista.pesoAresta(0, 2)
+# print(f'Resultado: vai de {grafo_lista.grafo_lista[0]["label"]} a {grafo_lista.grafo_lista[2]["label"]} peso = {res}')
