@@ -1,9 +1,3 @@
-TO_DO = '''
-REVISAR FUNÇÕES DE REMOVER  - removerVertice
-IMPLEMENTAR RETORNAR_VIZINHOS
-AO IMPRIMIR GRAFO DEVE-SE MOSTRAR OS VIZINHOS e peso em caso de ponderado
-'''
-
 RED = "\033[91m"  # Vermelho
 GREEN = "\033[92m"  # Verde
 PURPLE = "\033[95m" #Roxo
@@ -22,6 +16,9 @@ class GrafoLista(Grafos):
         self.arestas = []
 
     def labelVertice(self, indice : int) -> str:
+        '''
+        indice : int = Indice do vértice
+        '''
         try:
             return self.grafo_lista[indice].get("label")
         except IndexError as e:
@@ -37,14 +34,29 @@ class GrafoLista(Grafos):
             print("Vértice inserido com sucesso")
             return True
 
-    def imprimeGrafo(self) -> None: 
-        if self.grafo_lista:
-            print()
-            for i in range(len(self.grafo_lista)):
-                print(f'Grafo na posição {i}, label: {self.grafo_lista[i]["label"]}')
-            print()
-        else:
+    def imprimeGrafo(self) -> None:
+        """Imprime a representação do grafo, incluindo vértices, vizinhos e pesos das arestas (se ponderado)."""
+        if not self.grafo_lista:
             print("Grafo Lista ainda não possui vértices!")
+            return
+
+        print("\nRepresentação do Grafo:")
+        for i in range(len(self.grafo_lista)):
+            vertice_label = self.grafo_lista[i]["label"]
+            vizinhos = self.retornarVizinhos(i)
+            print(f'Vértice {i} ("{vertice_label}")')
+
+            if not vizinhos:
+                print("  Não possui vizinhos.")
+            else:
+                for vizinho_label in vizinhos:
+                    destino = self.grafo_lista.index(next(v for v in self.grafo_lista if v["label"] == vizinho_label))
+                    if self.ponderado:
+                        peso = self.pesoAresta(i, destino)
+                        print(f'  -> Vértice "{vizinho_label}" (Peso da aresta: {peso})')
+                    else:
+                        print(f'  -> Vértice "{vizinho_label}"')
+        print()
 
     def inserirAresta(self, label_origem : str, label_destino : str, peso : float = 1.0 ) -> bool:
         if not any(vertice["label"] == label_origem for vertice in self.grafo_lista):
@@ -70,7 +82,7 @@ class GrafoLista(Grafos):
                     self.arestas.append({"origem": label_destino, "destino": label_origem, "peso": peso})
             else:                           #Se o grafo não for ponderado
                 if self.direcionado:        #Se o grafo for direcionado
-                    self.arestas.append({"origem": label_origem, "destino": label_destino})
+                    self.arestas.append({"origem": label_origem, "destino": label_destino, "peso" : peso})
                 else:                       #Se o grafo for não direcionado
                     if label_origem == label_destino:
                         print(f"{RED}Impossível inserção direção self-loop em grafo não direcionado. {RESET}")
@@ -80,31 +92,50 @@ class GrafoLista(Grafos):
             print(f"{GREEN}Aresta inserida com sucesso. {RESET}")
             return True
 
-    def removerVertice(self, indice : int) -> bool:
+    def removerVertice(self, indice: int) -> bool:
         try:
+            # Verifica se o índice do vértice é válido
+            if indice < 0 or indice >= len(self.grafo_lista):
+                print(f"{RED}Vértice com índice não existente. {RESET}")
+                return False
+
             label_indice_a_ser_excluido = self.labelVertice(indice)
-            for i, aresta in enumerate(self.arestas):
+            
+            i = len(self.arestas) - 1
+            while i >= 0: 
+                if i < 0 or i >= len(self.arestas):
+                    break  #
+
+                aresta = self.arestas[i]
                 if (aresta["origem"] == label_indice_a_ser_excluido or aresta["destino"] == label_indice_a_ser_excluido):
-                    self.arestas.pop(i) 
-                    #print(f"indice {i}, arestas:  {aresta}")
+                    self.removerAresta(i) #Pra remover a aresta é necessário saber quais tem o índice com destino ou origem associado
+                i -= 1  
+            
             self.grafo_lista.pop(indice)
-            print(f"{GREEN}Vértice (e arestas associadas) com índice correspondente removida. {RESET}")
+            print(f"{GREEN}Vértice (e arestas associadas) com índice correspondente removido. {RESET}")
             return True
-        except IndexError:
-            print(f"{RED}Vértice com índice não existente. {RESET}")
-            return False
+        except IndexError as e:
+            print(f"{RED}Erro ao acessar índice: {e} {RESET}")
+            raise  # Re-lança a exceção para depuração
 
     def removerAresta(self, indice : int) -> bool:
         '''
          indice : int Diz respeito ao índice do vértice das arestas
         '''
+        label_origem_aresta_do_indice = self.arestas[indice]["origem"]
+        label_destino_aresta_do_indice_destino = self.arestas[indice]["destino"]
+
         try:
-            if not self.direcionada:
+            if self.direcionado:
                 self.arestas.pop(indice)
                 print(f"{GREEN}Aresta com índice {indice} removida. {RESET}")
                 return True
             else:
-                zero = 0 #Tem que ser levado em conta que ao remover uma aresta não direcional, se quebra as remvove as duas arestas criadas
+                for i in range(len(self.arestas) - 1, -1, -1):
+                    aresta = self.arestas[i]
+                    if (aresta["origem"] == label_origem_aresta_do_indice or aresta["destino"] == label_origem_aresta_do_indice):
+                        self.arestas.pop(i)
+                return True
         except IndexError:
             print(f"{RED}Aresta com índice não existente. {RESET}")
             return False
@@ -120,7 +151,6 @@ class GrafoLista(Grafos):
             return False
         
         if any((aresta["origem"] == label_origem) and (aresta["destino"] == label_destino) for aresta in self.arestas):
-            #print("Aresta específicada existe")
             return True
         else:
             return False
@@ -142,8 +172,22 @@ class GrafoLista(Grafos):
             print("grafo_lista não é ponderado")
             return 0.0
 
-    def retornarVizinhos():
-        zero = 0
+    def retornarVizinhos(self, vertice : int) -> list:
+        try: 
+            label_vertice = self.labelVertice(vertice)
+            vizinhos = []
+            for aresta in self.arestas:
+                if aresta["origem"] == label_vertice:
+                    label_vertice_destino_vizinho = aresta["destino"]
+                    if label_vertice_destino_vizinho not in vizinhos:
+                        vizinhos.append(label_vertice_destino_vizinho)
+                if aresta["destino"] == label_vertice:
+                    label_vertice_origem_vizinho = aresta["origem"]
+                    if label_vertice_origem_vizinho not in vizinhos:
+                        vizinhos.append(label_vertice_origem_vizinho)
+            return sorted(vizinhos)
+        except IndexError:
+            print(f"{RED} Vértice com índice não existe para retornar vizinhos{RESET}")
 
 class GrafoMatriz(Grafos):
     def _init__(self, direcionado, ponderado):
@@ -161,10 +205,10 @@ grafo_lista.inserirAresta("C", "A", 5.2) #2
 grafo_lista.inserirAresta("C", "B", 1.25) #2
 print(grafo_lista.arestas)
 grafo_lista.imprimeGrafo()
-grafo_lista.removerVertice(0)
-grafo_lista.imprimeGrafo()
-
-
+resss  = grafo_lista.retornarVizinhos(0)
+print(resss)
+# grafo_lista.imprimeGrafo()
+# grafo_lista.imprimeGrafo()
 # res = grafo_lista.pesoAresta(0, 1)
 # print(f'Resultado: vai de {grafo_lista.grafo_lista[0]["label"]} a {grafo_lista.grafo_lista[1]["label"]} peso = {res} ')
 # res = grafo_lista.pesoAresta(2, 0)
