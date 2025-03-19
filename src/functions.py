@@ -2,6 +2,11 @@ TO_DO = '''
 REVISAR FUNÇÕES DE REMOVER  - removerVertice
 IMPLEMENTAR RETORNAR_VIZINHOS
 AO IMPRIMIR GRAFO DEVE-SE MOSTRAR OS VIZINHOS e peso em caso de ponderado
+
+grafomatriz
+faltou label vertice e de imprime grafo,
+confefrir dps
+ 
 '''
 
 RED = "\033[91m"  # Vermelho
@@ -146,11 +151,102 @@ class GrafoLista(Grafos):
         zero = 0
 
 class GrafoMatriz(Grafos):
-    def _init__(self, direcionado, ponderado):
+    def __init__(self, direcionado=False, ponderado=False):
         super().__init__(direcionado, ponderado)
-        grafo_matriz = [[]]
+        self.grafo_matriz = []  # Matriz de adjacência inicialmente vazia
 
-grafo_lista = GrafoLista(ponderado=True, direcionado=True)
+    def inserir_vertice(self, vertice):
+        """Adiciona um novo vértice ao grafo, expandindo a matriz de adjacência."""
+        if vertice not in self.vertices:
+            self.vertices.append(vertice)
+            self.grafo_matriz.append([0] * len(self.vertices))
+
+            for linha in self.grafo_matriz:
+                while len(linha) < len(self.vertices):
+                    linha.append(0)
+        else:
+            print(f"Vértice '{vertice}' já existe no grafo.")
+
+    def inserir_aresta(self, origem, destino, peso=1):
+        """Adiciona uma aresta entre dois vértices considerando o tipo do grafo."""
+        if 0 <= origem < len(self.vertices) and 0 <= destino < len(self.vertices):
+            valor = peso if self.ponderado else 1
+            self.grafo_matriz[origem][destino] = valor
+
+            if not self.direcionado:
+                self.grafo_matriz[destino][origem] = valor
+            return True
+        else:
+            print("Índices inválidos para inserção da aresta.")
+            return False
+
+    def remover_aresta(self, origem, destino):
+        """Remove uma aresta do grafo, considerando se ele é direcionado ou não."""
+        if 0 <= origem < len(self.vertices) and 0 <= destino < len(self.vertices):
+            self.grafo_matriz[origem][destino] = 0
+
+            if not self.direcionado:
+                self.grafo_matriz[destino][origem] = 0
+
+            return True
+        else:
+            print("Índices inválidos para remoção da aresta.")
+            return False
+
+    def existe_aresta(self, origem, destino):
+        """Verifica se existe uma aresta entre dois vértices."""
+        if 0 <= origem < len(self.vertices) and 0 <= destino < len(self.vertices):
+            return self.grafo_matriz[origem][destino] != 0
+        else:
+            print("Índices inválidos para verificação da aresta.")
+            return False
+
+    def peso_aresta(self, origem, destino):
+        """Retorna o peso da aresta entre dois vértices, ou -1 se a aresta não existir."""
+        if 0 <= origem < len(self.vertices) and 0 <= destino < len(self.vertices):
+            peso = self.grafo_matriz[origem][destino]
+            return peso if peso != 0 else -1
+        else:
+            print("Índices inválidos para consulta de peso.")
+            return -1
+
+    def retornar_vizinhos(self, vertice):
+        """Retorna uma lista dos vizinhos do vértice dado."""
+        if 0 <= vertice < len(self.vertices):
+            vizinhos = [i for i in range(len(self.vertices)) if self.grafo_matriz[vertice][i] != 0]
+            return vizinhos
+        else:
+            print("Índice de vértice inválido.")
+            return []
+
+    def imprimir_matriz(self):
+        """Imprime a matriz de adjacência do grafo."""
+        for linha in self.grafo_matriz:
+            print(" ".join(map(str, linha)))
+
+
+# Teste
+grafo = GrafoMatriz(direcionado=False, ponderado=True)
+grafo.inserir_vertice("A")
+grafo.inserir_vertice("B")
+grafo.inserir_vertice("C")
+
+grafo.inserir_aresta(0, 1, 5)  # Adiciona uma aresta entre A e B com peso 5
+grafo.inserir_aresta(1, 2, 3)  # Adiciona uma aresta entre B e C com peso 3
+
+print("\nMatriz de adjacência:")
+grafo.imprimir_matriz()
+
+# Testando a função retornar_vizinhos
+print("\nVizinhos do vértice A:", grafo.retornar_vizinhos(0))  # Deve retornar [1]
+print("Vizinhos do vértice B:", grafo.retornar_vizinhos(1))  # Deve retornar [0, 2]
+print("Vizinhos do vértice C:", grafo.retornar_vizinhos(2))  # Deve retornar [1]
+
+
+
+
+
+"""grafo_lista = GrafoLista(ponderado=True, direcionado=True)
 grafo_lista.labelVertice(1)
 grafo_lista.inserirVertice("A")
 grafo_lista.inserirVertice("B")
@@ -162,7 +258,7 @@ grafo_lista.inserirAresta("C", "B", 1.25) #2
 print(grafo_lista.arestas)
 grafo_lista.imprimeGrafo()
 grafo_lista.removerVertice(0)
-grafo_lista.imprimeGrafo()
+grafo_lista.imprimeGrafo()"""
 
 
 # res = grafo_lista.pesoAresta(0, 1)
