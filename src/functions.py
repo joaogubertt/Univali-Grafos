@@ -274,4 +274,20 @@ class GrafoMatriz(Grafos):
         for linha in self.grafo_matriz:
             print(" ".join(map(str, linha)))
 
+    def label_vertice(self, indice):
+        """Retorna o rótulo (nome) do vértice baseado no índice."""
+        if 0 <= indice < len(self.vertices):
+            return self.vertices[indice]
+        else:
+            print("Índice de vértice inválido.")
+            return None
+
+    def imprime_grafo(self):
+        """Imprime o grafo mostrando as conexões entre os vértices."""
+        print("\nRepresentação do Grafo:\n")
+        for i in range(len(self.vertices)):
+            vizinhos = [self.vertices[j] for j in range(len(self.vertices)) if self.grafo_matriz[i][j] != 0]
+            print(f"{self.vertices[i]} -> {', '.join(vizinhos) if vizinhos else 'Sem conexões'}")
+
+
 
