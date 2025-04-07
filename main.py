@@ -56,49 +56,49 @@ print("----------\n")
 grafoM = GrafoMatriz(direcionado=False, ponderado=True)
     
 # Inserindo vértices
-grafoM.inserir_vertice("A")
-grafoM.inserir_vertice("B")
-grafoM.inserir_vertice("C")
-grafoM.inserir_vertice("D")
+grafoM.inserirVertice("A")
+grafoM.inserirVertice("B")
+grafoM.inserirVertice("C")
+grafoM.inserirVertice("D")
 print("Vértices inseridos com sucesso!\n")
     
 # Inserindo arestas
-grafoM.inserir_aresta(0, 1, 5)  # A - B
-grafoM.inserir_aresta(1, 2, 3)  # B - C
-grafoM.inserir_aresta(2, 3, 2)  # C - D
-grafoM.inserir_aresta(3, 0, 4)  # D - A
+grafoM.inserirAresta(0, 1, 5)  # A - B
+grafoM.inserirAresta(1, 2, 3)  # B - C
+grafoM.inserirAresta(2, 3, 2)  # C - D
+grafoM.inserirAresta(3, 0, 4)  # D - A
 print("Arestas inseridas com sucesso!\n")
 
 # Imprimindo matriz de adjacência
 print("\nMatriz de Adjacência:\n")
-grafoM.imprimir_matriz()
+grafoM.imprimeGrafo()
 print("")
     
 # Verificando existência de arestas
-print(f"Existe aresta entre A e B? {grafoM.existe_aresta(0, 1)}")
-print(f"Existe aresta entre B e D? {grafoM.existe_aresta(1, 3)}")
+print(f"Existe aresta entre A e B? {grafoM.existeAresta(0, 1)}")
+print(f"Existe aresta entre B e D? {grafoM.existeAresta(1, 3)}")
 print("")
     
 # Verificando pesos das arestas
-print(f"Peso da aresta A - B: {grafoM.peso_aresta(0, 1)}")
-print(f"Peso da aresta C - D: {grafoM.peso_aresta(2, 3)}")
+print(f"Peso da aresta A - B: {grafoM.pesoAresta(0, 1)}")
+print(f"Peso da aresta C - D: {grafoM.pesoAresta(2, 3)}")
 print("\n")
     
 # Retornando vizinhos
-print(f"Vizinhos de A: {grafoM.retornar_vizinhos(0)}")
-print(f"Vizinhos de B: {grafoM.retornar_vizinhos(1)}")
+print(f"Vizinhos de A: {grafoM.retornarVizinhos(0)}")
+print(f"Vizinhos de B: {grafoM.retornarVizinhos(1)}")
 print("")
     
 # Removendo uma aresta
-grafoM.remover_aresta(0, 1)
+grafoM.removerAresta(0, 1)
 print("Aresta entre A e B removida!\n")
     
 # Imprimindo matriz após remoção
 print("Matriz de Adjacência após remoção da aresta A-B:\n")
-grafoM.imprimir_matriz()
+grafoM.imprimeGrafo()
 print("")
     
 # Imprimindo representação do grafo
-grafoM.imprime_grafo()
+grafoM.imprimeGrafo()
 
 
