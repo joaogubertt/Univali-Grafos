@@ -1,7 +1,7 @@
 RED = "\033[91m"  # Vermelho
 GREEN = "\033[92m"  # Verde
 PURPLE = "\033[95m" #Roxo
-RESET = "\033[0m"  #Reseta cor
+RESET = "\033[0m"  #Reseta cor 
 
 class Grafos:
     def __init__(self, direcionado=False, ponderado=False):
