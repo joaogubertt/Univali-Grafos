@@ -1,4 +1,5 @@
 from collections import deque
+import heapq
 
 RED = "\033[91m"  # Vermelho
 GREEN = "\033[92m"  # Verde
@@ -381,6 +382,52 @@ class GrafoLista(Grafos):
                         pilha.append(vizinho)
 
         print(f"Vértice {vertice_origem} - Sequência de visita DFS:", " → ".join(sequencia_dfs))
+
+
+    def dijkstra(self, vertice_origem):
+        # Verifica se o vértice existe no grafo
+        labels = [v['label'] for v in self.grafo_lista]
+        if vertice_origem not in labels:
+            print(f"Vértice {vertice_origem} não está no grafo.")
+            return
+
+        # Inicializa as distâncias como infinito e o vértice de origem como 0
+        distancias = {v['label']: float('inf') for v in self.grafo_lista}
+        distancias[vertice_origem] = 0
+
+        # Predecessores para reconstruir caminho
+        anteriores = {v['label']: None for v in self.grafo_lista}
+
+        # Fila de prioridade (min-heap) com (distância, vértice)
+        fila = [(0, vertice_origem)]
+
+        while fila:
+            dist_atual, atual = heapq.heappop(fila)
+
+            # Procura vizinhos do vértice atual
+            for aresta in self.arestas:
+                origem = aresta['origem']
+                destino = aresta['destino']
+                peso = aresta.get('peso', 1)  # Assume 1 se não tiver peso
+
+                # Verifica conexão considerando se é direcionado ou não
+                if origem == atual:
+                    vizinho = destino
+                elif not self.direcionado and destino == atual:
+                    vizinho = origem
+                else:
+                    continue
+
+                nova_distancia = dist_atual + peso
+                if nova_distancia < distancias[vizinho]:
+                    distancias[vizinho] = nova_distancia
+                    anteriores[vizinho] = atual
+                    heapq.heappush(fila, (nova_distancia, vizinho))
+
+        print(f"Distâncias mínimas a partir do vértice {vertice_origem}:")
+        for v in distancias:
+            print(f"{vertice_origem} → {v}: {distancias[v]}")
+
 
 class GrafoMatriz(Grafos):
     def __init__(self, direcionado=False, ponderado=False):

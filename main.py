@@ -21,6 +21,8 @@ def main():
     grafo_teste_01.busca_em_profundidade("0")
     grafo_teste_01.busca_em_profundidade("1")
     grafo_teste_01.busca_em_profundidade("2")
+    print("-")
+    grafo_teste_01.dijkstra("0")
 
     print("\n")
 
@@ -45,6 +47,12 @@ def main():
     grafo_teste_02.busca_em_profundidade("1")
     grafo_teste_02.busca_em_profundidade("2")
     grafo_teste_02.busca_em_profundidade("3")
+    print("-")
+    grafo_teste_02.dijkstra("0")
+    grafo_teste_02.dijkstra("1")
+    grafo_teste_02.dijkstra("2")
+    grafo_teste_02.dijkstra("3")
+    grafo_teste_02.dijkstra("4")
 
     print("\n")
 
@@ -71,6 +79,8 @@ def main():
     grafo_teste_03.busca_em_profundidade("2")
     grafo_teste_03.busca_em_profundidade("3")
     grafo_teste_03.busca_em_profundidade("4")
+    print("-")
+    
 
     print("\n")
 
@@ -98,6 +108,12 @@ def main():
     grafo_teste_04.busca_em_profundidade("2")
     grafo_teste_04.busca_em_profundidade("3")
     grafo_teste_04.busca_em_profundidade("4")
+    print("-")
+    grafo_teste_04.dijkstra("0")
+    grafo_teste_04.dijkstra("1")
+    grafo_teste_04.dijkstra("2")
+    grafo_teste_04.dijkstra("3")
+    grafo_teste_04.dijkstra("4")
 
     print("\n")
     
