@@ -1,7 +1,10 @@
+from collections import deque
+import heapq
+
 RED = "\033[91m"  # Vermelho
 GREEN = "\033[92m"  # Verde
 PURPLE = "\033[95m" #Roxo
-RESET = "\033[0m"  #Reseta cor
+RESET = "\033[0m"  #Reseta cor 
 
 class Grafos:
     def __init__(self, direcionado=False, ponderado=False):
@@ -35,6 +38,83 @@ class Grafos:
 
     def retornarVizinhos(self, vertice: int) -> list:
         raise NotImplementedError("Método deve ser implementado nas classes filhas")
+    
+    def busca_em_largura(self, vertice_origem):
+        raise NotImplementedError("Método deve ser implementado nas classes filhas")
+    
+    def busca_em_profundidade(self, vertice_origem):
+        raise NotImplementedError("Método deve ser implementado nas classes filhas")    
+
+    @staticmethod
+    def carregar_grafo_arquivo(grafo, caminho_arquivo: str) -> bool:
+        """
+        Carrega um grafo a partir de um arquivo de texto no formato especificado.
+        
+        Parâmetros:
+            grafo: Instância de GrafoLista ou GrafoMatriz
+            caminho_arquivo: Caminho para o arquivo de texto
+        
+        Returns:
+            bool: True se o carregamento foi bem-sucedido, False caso contrário
+        """
+        try:
+            with open(caminho_arquivo, 'r') as arquivo:
+                primeira_linha = arquivo.readline().strip().split()
+                if len(primeira_linha) < 4:
+                    print(f"{RED}Formato de arquivo inválido. Primeira linha deve conter V A D P{RESET}")
+                    return False
+                    
+                V = int(primeira_linha[0])  # Número de vértices
+                A = int(primeira_linha[1])  # Número de arestas
+                D = int(primeira_linha[2])  # Direcionado (1) ou não (0)
+                P = int(primeira_linha[3])  # Ponderado (1) ou não (0)
+                
+                if D == 1 and not grafo.direcionado:
+                    print(f"{RED}Arquivo indica grafo direcionado, mas grafo fornecido não é direcionado{RESET}")
+                    return False
+                if D == 0 and grafo.direcionado:
+                    print(f"{RED}Arquivo indica grafo não direcionado, mas grafo fornecido é direcionado{RESET}")
+                    return False
+                if P == 1 and not grafo.ponderado:
+                    print(f"{RED}Arquivo indica grafo ponderado, mas grafo fornecido não é ponderado{RESET}")
+                    return False
+                if P == 0 and grafo.ponderado:
+                    print(f"{RED}Arquivo indica grafo não ponderado, mas grafo fornecido é ponderado{RESET}")
+                    return False
+                
+                for i in range(V):
+                    grafo.inserirVertice(str(i))
+                
+                for _ in range(A):
+                    linha_aresta = arquivo.readline().strip().split()
+                    if not linha_aresta:
+                        continue 
+                        
+                    if P == 1:  # Grafo ponderado
+                        if len(linha_aresta) < 3:
+                            print(f"{RED}Formato de aresta inválido para grafo ponderado. Esperado: origem destino peso{RESET}")
+                            return False
+                        origem = linha_aresta[0]
+                        destino = linha_aresta[1]
+                        peso = float(linha_aresta[2])
+                        grafo.inserirAresta(origem, destino, peso)
+                    else:  # Grafo não ponderado
+                        if len(linha_aresta) < 2:
+                            print(f"{RED}Formato de aresta inválido para grafo não ponderado. Esperado: origem destino{RESET}")
+                            return False
+                        origem = linha_aresta[0]
+                        destino = linha_aresta[1]
+                        grafo.inserirAresta(origem, destino)
+                
+                print(f"\n{GREEN}Grafo carregado com sucesso a partir do arquivo: {caminho_arquivo}{RESET}")
+                return True
+                
+        except FileNotFoundError:
+            print(f"{RED}Arquivo não encontrado: {caminho_arquivo}{RESET}")
+            return False
+        except Exception as e:
+            print(f"{RED}Erro ao carregar grafo do arquivo: {e}{RESET}")
+            return False
 
 class GrafoLista(Grafos):
     def __init__(self, direcionado=False, ponderado=False):
@@ -55,7 +135,7 @@ class GrafoLista(Grafos):
             return False
         else:
             self.grafo_lista.append({"label": label})
-            print("Vértice inserido com sucesso")
+            print("Vértice inserido com sucesso.")
             return True
 
     def imprimeGrafo(self) -> None:
@@ -216,7 +296,7 @@ class GrafoLista(Grafos):
                 return aresta.get("peso", 0.0)
         return 0.0
 
-    def retornarVizinhos(self, vertice: int) -> list:
+    def retornarVizinhos(self, vertice: str) -> list:
         try:
             label_vertice = self.labelVertice(vertice)
             vizinhos = []
@@ -233,6 +313,121 @@ class GrafoLista(Grafos):
         except IndexError:
             print(f"{RED} Vértice com índice não existe para retornar vizinhos{RESET}")
             return []
+
+    def busca_em_largura(self, vertice_origem):
+        labels = [v['label'] for v in self.grafo_lista]
+        if vertice_origem not in labels:
+            print(f"Vértice {vertice_origem} não está no grafo.")
+            return
+
+        visitados = set()
+        fila = [vertice_origem]
+        sequencia_bfs = []
+
+        while fila:
+            atual = fila.pop(0)
+            if atual not in visitados:
+                visitados.add(atual)
+                sequencia_bfs.append(atual)
+
+                # Pega vizinhos
+                vizinhos = []
+                for aresta in self.arestas:
+                    origem_a = aresta['origem']
+                    destino_a = aresta['destino']
+
+                    if origem_a == atual:
+                        vizinhos.append(destino_a)
+                    elif not self.direcionado and destino_a == atual:
+                        vizinhos.append(origem_a)
+
+                for vizinho in vizinhos:
+                    if vizinho not in visitados and vizinho not in fila:
+                        fila.append(vizinho)
+
+        print(f"Vértice {vertice_origem} - Sequência de visita BFS:", " → ".join(sequencia_bfs))
+
+    def busca_em_profundidade(self, vertice_origem):
+        labels = [v['label'] for v in self.grafo_lista]
+        if vertice_origem not in labels:
+            print(f"Vértice {vertice_origem} não está no grafo.")
+            return
+
+        visitados = set()
+        sequencia_dfs = []
+
+        # Pilha para simular a recursão
+        pilha = [vertice_origem]
+
+        while pilha:
+            atual = pilha.pop()
+            if atual not in visitados:
+                visitados.add(atual)
+                sequencia_dfs.append(atual)
+
+                # Pega vizinhos
+                vizinhos = []
+                for aresta in self.arestas:
+                    origem_a = aresta['origem']
+                    destino_a = aresta['destino']
+
+                    if origem_a == atual:
+                        vizinhos.append(destino_a)
+                    elif not self.direcionado and destino_a == atual:
+                        vizinhos.append(origem_a)
+
+                # Adiciona vizinhos na pilha (na ordem reversa para manter comportamento recursivo padrão)
+                for vizinho in reversed(vizinhos):
+                    if vizinho not in visitados:
+                        pilha.append(vizinho)
+
+        print(f"Vértice {vertice_origem} - Sequência de visita DFS:", " → ".join(sequencia_dfs))
+
+
+    def dijkstra(self, vertice_origem):
+        # Verifica se o vértice existe no grafo
+        labels = [v['label'] for v in self.grafo_lista]
+        if vertice_origem not in labels:
+            print(f"Vértice {vertice_origem} não está no grafo.")
+            return
+
+        # Inicializa as distâncias como infinito e o vértice de origem como 0
+        distancias = {v['label']: float('inf') for v in self.grafo_lista}
+        distancias[vertice_origem] = 0
+
+        # Predecessores para reconstruir caminho
+        anteriores = {v['label']: None for v in self.grafo_lista}
+
+        # Fila de prioridade (min-heap) com (distância, vértice)
+        fila = [(0, vertice_origem)]
+
+        while fila:
+            dist_atual, atual = heapq.heappop(fila)
+
+            # Procura vizinhos do vértice atual
+            for aresta in self.arestas:
+                origem = aresta['origem']
+                destino = aresta['destino']
+                peso = aresta.get('peso', 1)  # Assume 1 se não tiver peso
+
+                # Verifica conexão considerando se é direcionado ou não
+                if origem == atual:
+                    vizinho = destino
+                elif not self.direcionado and destino == atual:
+                    vizinho = origem
+                else:
+                    continue
+
+                nova_distancia = dist_atual + peso
+                if nova_distancia < distancias[vizinho]:
+                    distancias[vizinho] = nova_distancia
+                    anteriores[vizinho] = atual
+                    heapq.heappush(fila, (nova_distancia, vizinho))
+
+        print(f"Distâncias mínimas a partir do vértice {vertice_origem}:")
+        for v in distancias:
+            print(f"{vertice_origem} → {v}: {distancias[v]}")
+
 
 class GrafoMatriz(Grafos):
     def __init__(self, direcionado=False, ponderado=False):
@@ -371,73 +566,101 @@ class GrafoMatriz(Grafos):
         else:
             print(f"{RED}Índice de vértice inválido.{RESET}")
             return []
-        
-def carregar_grafo_arquivo(grafo, caminho_arquivo: str) -> bool:
-    """
-    Carrega um grafo a partir de um arquivo de texto no formato especificado.
     
-    Parâmetros:
-        grafo: Instância de GrafoLista ou GrafoMatriz
-        caminho_arquivo: Caminho para o arquivo de texto
-    
-    Returns:
-        bool: True se o carregamento foi bem-sucedido, False caso contrário
-    """
-    try:
-        with open(caminho_arquivo, 'r') as arquivo:
-            primeira_linha = arquivo.readline().strip().split()
-            if len(primeira_linha) < 4:
-                print(f"{RED}Formato de arquivo inválido. Primeira linha deve conter V A D P{RESET}")
-                return False
-                
-            V = int(primeira_linha[0])  # Número de vértices
-            A = int(primeira_linha[1])  # Número de arestas
-            D = int(primeira_linha[2])  # Direcionado (1) ou não (0)
-            P = int(primeira_linha[3])  # Ponderado (1) ou não (0)
-            
-            if D == 1 and not grafo.direcionado:
-                print(f"{RED}Arquivo indica grafo direcionado, mas grafo fornecido não é direcionado{RESET}")
-                return False
-            if D == 0 and grafo.direcionado:
-                print(f"{RED}Arquivo indica grafo não direcionado, mas grafo fornecido é direcionado{RESET}")
-                return False
-            if P == 1 and not grafo.ponderado:
-                print(f"{RED}Arquivo indica grafo ponderado, mas grafo fornecido não é ponderado{RESET}")
-                return False
-            if P == 0 and grafo.ponderado:
-                print(f"{RED}Arquivo indica grafo não ponderado, mas grafo fornecido é ponderado{RESET}")
-                return False
-            
-            for i in range(V):
-                grafo.inserirVertice(str(i))
-            
-            for _ in range(A):
-                linha_aresta = arquivo.readline().strip().split()
-                if not linha_aresta:
-                    continue 
-                    
-                if P == 1:  # Grafo ponderado
-                    if len(linha_aresta) < 3:
-                        print(f"{RED}Formato de aresta inválido para grafo ponderado. Esperado: origem destino peso{RESET}")
-                        return False
-                    origem = linha_aresta[0]
-                    destino = linha_aresta[1]
-                    peso = float(linha_aresta[2])
-                    grafo.inserirAresta(origem, destino, peso)
-                else:  # Grafo não ponderado
-                    if len(linha_aresta) < 2:
-                        print(f"{RED}Formato de aresta inválido para grafo não ponderado. Esperado: origem destino{RESET}")
-                        return False
-                    origem = linha_aresta[0]
-                    destino = linha_aresta[1]
-                    grafo.inserirAresta(origem, destino)
-            
-            print(f"{GREEN}Grafo carregado com sucesso a partir do arquivo: {caminho_arquivo}{RESET}")
-            return True
-            
-    except FileNotFoundError:
-        print(f"{RED}Arquivo não encontrado: {caminho_arquivo}{RESET}")
-        return False
-    except Exception as e:
-        print(f"{RED}Erro ao carregar grafo do arquivo: {e}{RESET}")
-        return False
+    def busca_em_largura(self, vertice_origem):
+        from collections import deque
+
+        if vertice_origem not in self.vertices:
+            print(f"Vértice {vertice_origem} não encontrado no grafo.")
+            return
+
+        visitados = set()
+        fila = deque()
+
+        index_origem = self.vertices.index(vertice_origem)
+        fila.append(index_origem)
+        visitados.add(index_origem)
+
+        sequencia_bfs = []
+
+        while fila:
+            atual_idx = fila.popleft()
+            sequencia_bfs.append(self.vertices[atual_idx])
+
+            for i in range(len(self.vertices)):
+                if self.grafo_matriz[atual_idx][i] != 0 and i not in visitados:
+                    visitados.add(i)
+                    fila.append(i)
+
+        print(f"Vértice {vertice_origem} - Sequência de visita BFS:", " → ".join(sequencia_bfs))
+
+    def busca_em_profundidade(self, vertice_origem):
+        if vertice_origem not in self.vertices:
+            print(f"Vértice {vertice_origem} não está no grafo.")
+            return
+
+        visitados = set()
+        sequencia_dfs = []
+
+        label_para_indice = {label: i for i, label in enumerate(self.vertices)}
+        indice_para_label = {i: label for i, label in enumerate(self.vertices)}
+
+        def dfs(indice):
+            label = indice_para_label[indice]
+            visitados.add(label)
+            sequencia_dfs.append(label)
+
+            for i, aresta in enumerate(self.grafo_matriz[indice]):
+                if aresta != 0:
+                    vizinho_label = indice_para_label[i]
+                    if vizinho_label not in visitados:
+                        dfs(i)
+
+        dfs(label_para_indice[vertice_origem])
+        print(f"Vértice {vertice_origem} - Sequência de visita DFS:", " → ".join(sequencia_dfs))
+
+    def dijkstra(self, origem):
+        if origem not in self.vertices:
+            print(f"Vértice {origem} não encontrado no grafo.")
+            return
+
+        n = len(self.vertices)
+        distancias = {v: float('inf') for v in self.vertices}
+        origem_idx = self.vertices.index(origem)
+        distancias[origem] = 0
+
+        # Fila de prioridade: (distância, índice do vértice)
+        fila = [(0, origem_idx)]
+        visitados = set()
+        anteriores = {v: None for v in self.vertices}
+
+        while fila:
+            dist_atual, idx_atual = heapq.heappop(fila)
+            vertice_atual = self.vertices[idx_atual]
+
+            if vertice_atual in visitados:
+                continue
+            visitados.add(vertice_atual)
+
+            for vizinho_idx, peso in enumerate(self.grafo_matriz[idx_atual]):
+                if peso > 0:  # existe aresta
+                    vizinho = self.vertices[vizinho_idx]
+                    nova_dist = dist_atual + peso
+                    if nova_dist < distancias[vizinho]:
+                        distancias[vizinho] = nova_dist
+                        anteriores[vizinho] = vertice_atual
+                        heapq.heappush(fila, (nova_dist, vizinho_idx))
+
+        print(f"Menores distâncias a partir do vértice {origem}:")
+        for v in self.vertices:
+            if distancias[v] == float('inf'):
+                print(f"{origem} → {v}: não alcançável")
+            else:
+                # Reconstrói caminho
+                caminho = []
+                atual = v
+                while atual is not None:
+                    caminho.append(atual)
+                    atual = anteriores[atual]
+                caminho.reverse()
+                print(f"{origem} → {v}: distância = {distancias[v]}, caminho = {' → '.join(caminho)}")
