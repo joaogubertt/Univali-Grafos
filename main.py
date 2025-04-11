@@ -80,6 +80,11 @@ def main():
     grafo_teste_03.busca_em_profundidade("3")
     grafo_teste_03.busca_em_profundidade("4")
     print("-")
+    grafo_teste_03.dijkstra("0")
+    grafo_teste_03.dijkstra("1")
+    grafo_teste_03.dijkstra("2")
+    grafo_teste_03.dijkstra("3")
+    grafo_teste_03.dijkstra("4")
     
 
     print("\n")

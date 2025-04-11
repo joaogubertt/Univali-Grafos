@@ -618,3 +618,49 @@ class GrafoMatriz(Grafos):
 
         dfs(label_para_indice[vertice_origem])
         print(f"Vértice {vertice_origem} - Sequência de visita DFS:", " → ".join(sequencia_dfs))
+
+    def dijkstra(self, origem):
+        if origem not in self.vertices:
+            print(f"Vértice {origem} não encontrado no grafo.")
+            return
+
+        n = len(self.vertices)
+        distancias = {v: float('inf') for v in self.vertices}
+        origem_idx = self.vertices.index(origem)
+        distancias[origem] = 0
+
+        # Fila de prioridade: (distância, índice do vértice)
+        fila = [(0, origem_idx)]
+        visitados = set()
+        anteriores = {v: None for v in self.vertices}
+
+        while fila:
+            dist_atual, idx_atual = heapq.heappop(fila)
+            vertice_atual = self.vertices[idx_atual]
+
+            if vertice_atual in visitados:
+                continue
+            visitados.add(vertice_atual)
+
+            for vizinho_idx, peso in enumerate(self.grafo_matriz[idx_atual]):
+                if peso > 0:  # existe aresta
+                    vizinho = self.vertices[vizinho_idx]
+                    nova_dist = dist_atual + peso
+                    if nova_dist < distancias[vizinho]:
+                        distancias[vizinho] = nova_dist
+                        anteriores[vizinho] = vertice_atual
+                        heapq.heappush(fila, (nova_dist, vizinho_idx))
+
+        print(f"Menores distâncias a partir do vértice {origem}:")
+        for v in self.vertices:
+            if distancias[v] == float('inf'):
+                print(f"{origem} → {v}: não alcançável")
+            else:
+                # Reconstrói caminho
+                caminho = []
+                atual = v
+                while atual is not None:
+                    caminho.append(atual)
+                    atual = anteriores[atual]
+                caminho.reverse()
+                print(f"{origem} → {v}: distância = {distancias[v]}, caminho = {' → '.join(caminho)}")

@@ -133,3 +133,43 @@ Abaixo estão quatro grafos em arquivos `.txt`, criados para fins de teste com d
   - Vértice 5 → 5 → 3 → 1 → 0 → 2 → 4  
 
 ---
+
+# 📈 Resultados do Algoritmo de Dijkstra (iniciando do vértice 0)
+
+---
+
+## 📄 grafo1.txt
+
+- 0 → 0: distância = 0, caminho = 0  
+- 0 → 1: distância = 1, caminho = 0 → 1  
+- 0 → 2: distância = 2, caminho = 0 → 1 → 2  
+
+---
+
+## 📄 grafo2.txt
+
+- 0 → 0: distância = 0, caminho = 0  
+- 0 → 1: distância = 3, caminho = 0 → 1  
+- 0 → 2: distância = 5, caminho = 0 → 1 → 2  
+- 0 → 3: distância = 9, caminho = 0 → 1 → 2 → 3  
+
+---
+
+## 📄 grafo3.txt
+
+- 0 → 0: distância = 0, caminho = 0  
+- 0 → 1: distância = 2, caminho = 0 → 1  
+- 0 → 2: distância = 4, caminho = 0 → 2  
+- 0 → 3: distância = 5, caminho = 0 → 1 → 3  
+- 0 → 4: distância = 6, caminho = 0 → 1 → 3 → 4  
+
+---
+
+## 📄 grafo4.txt
+
+- 0 → 0: distância = 0, caminho = 0  
+- 0 → 1: distância = 1, caminho = 0 → 1  
+- 0 → 2: distância = 1, caminho = 0 → 2  
+- 0 → 3: distância = 2, caminho = 0 → 1 → 3  
+- 0 → 4: distância = 2, caminho = 0 → 2 → 4  
+- 0 → 5: distância = 3, caminho = 0 → 2 → 4 → 5  
