@@ -40,6 +40,9 @@ class Grafos:
     
     def busca_em_largura(self, vertice_origem):
         raise NotImplementedError("Método deve ser implementado nas classes filhas")
+    
+    def busca_em_profundidade(self, vertice_origem):
+        raise NotImplementedError("Método deve ser implementado nas classes filhas")    
 
     @staticmethod
     def carregar_grafo_arquivo(grafo, caminho_arquivo: str) -> bool:
@@ -311,37 +314,73 @@ class GrafoLista(Grafos):
             return []
 
     def busca_em_largura(self, vertice_origem):
-        if not any(v["label"] == vertice_origem for v in self.grafo_lista):
+        labels = [v['label'] for v in self.grafo_lista]
+        if vertice_origem not in labels:
             print(f"Vértice {vertice_origem} não está no grafo.")
             return
 
         visitados = set()
-        fila = deque()
-        fila.append(vertice_origem)
-        visitados.add(vertice_origem)
+        fila = [vertice_origem]
+        sequencia_bfs = []
 
-        print(f"Vertice {vertice_origem} - Ordem de visita (BFS):")
-        sequencia_bfs = ""
         while fila:
-            atual = fila.popleft()
-            sequencia_bfs = sequencia_bfs + " " + atual
+            atual = fila.pop(0)
+            if atual not in visitados:
+                visitados.add(atual)
+                sequencia_bfs.append(atual)
 
-            vizinhos = []
-            for aresta in self.arestas:
-                origem = aresta['origem']
-                destino = aresta['destino']
+                # Pega vizinhos
+                vizinhos = []
+                for aresta in self.arestas:
+                    origem_a = aresta['origem']
+                    destino_a = aresta['destino']
 
-                if origem == atual:
-                    vizinhos.append(destino)
-                elif not self.direcionado and destino == atual:
-                    vizinhos.append(origem)
+                    if origem_a == atual:
+                        vizinhos.append(destino_a)
+                    elif not self.direcionado and destino_a == atual:
+                        vizinhos.append(origem_a)
 
-            for vizinho in vizinhos:
-                if vizinho not in visitados:
-                    visitados.add(vizinho)
-                    fila.append(vizinho)
-        print(sequencia_bfs)
+                for vizinho in vizinhos:
+                    if vizinho not in visitados and vizinho not in fila:
+                        fila.append(vizinho)
 
+        print(f"Vértice {vertice_origem} - Sequência de visita BFS:", " → ".join(sequencia_bfs))
+
+    def busca_em_profundidade(self, vertice_origem):
+        labels = [v['label'] for v in self.grafo_lista]
+        if vertice_origem not in labels:
+            print(f"Vértice {vertice_origem} não está no grafo.")
+            return
+
+        visitados = set()
+        sequencia_dfs = []
+
+        # Pilha para simular a recursão
+        pilha = [vertice_origem]
+
+        while pilha:
+            atual = pilha.pop()
+            if atual not in visitados:
+                visitados.add(atual)
+                sequencia_dfs.append(atual)
+
+                # Pega vizinhos
+                vizinhos = []
+                for aresta in self.arestas:
+                    origem_a = aresta['origem']
+                    destino_a = aresta['destino']
+
+                    if origem_a == atual:
+                        vizinhos.append(destino_a)
+                    elif not self.direcionado and destino_a == atual:
+                        vizinhos.append(origem_a)
+
+                # Adiciona vizinhos na pilha (na ordem reversa para manter comportamento recursivo padrão)
+                for vizinho in reversed(vizinhos):
+                    if vizinho not in visitados:
+                        pilha.append(vizinho)
+
+        print(f"Vértice {vertice_origem} - Sequência de visita DFS:", " → ".join(sequencia_dfs))
 
 class GrafoMatriz(Grafos):
     def __init__(self, direcionado=False, ponderado=False):
@@ -495,15 +534,40 @@ class GrafoMatriz(Grafos):
         fila.append(index_origem)
         visitados.add(index_origem)
 
-        print("Ordem de visita (BFS):")
+        sequencia_bfs = []
 
-        sequencia_bfs = ""
         while fila:
             atual_idx = fila.popleft()
-            sequencia_bfs += f" {self.vertices[atual_idx]}"
+            sequencia_bfs.append(self.vertices[atual_idx])
 
             for i in range(len(self.vertices)):
                 if self.grafo_matriz[atual_idx][i] != 0 and i not in visitados:
                     visitados.add(i)
                     fila.append(i)
-        print(sequencia_bfs)
+
+        print(f"Vértice {vertice_origem} - Sequência de visita BFS:", " → ".join(sequencia_bfs))
+
+    def busca_em_profundidade(self, vertice_origem):
+        if vertice_origem not in self.vertices:
+            print(f"Vértice {vertice_origem} não está no grafo.")
+            return
+
+        visitados = set()
+        sequencia_dfs = []
+
+        label_para_indice = {label: i for i, label in enumerate(self.vertices)}
+        indice_para_label = {i: label for i, label in enumerate(self.vertices)}
+
+        def dfs(indice):
+            label = indice_para_label[indice]
+            visitados.add(label)
+            sequencia_dfs.append(label)
+
+            for i, aresta in enumerate(self.grafo_matriz[indice]):
+                if aresta != 0:
+                    vizinho_label = indice_para_label[i]
+                    if vizinho_label not in visitados:
+                        dfs(i)
+
+        dfs(label_para_indice[vertice_origem])
+        print(f"Vértice {vertice_origem} - Sequência de visita DFS:", " → ".join(sequencia_dfs))
