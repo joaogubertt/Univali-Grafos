@@ -1,4 +1,5 @@
 from collections import deque
+import heapq
 
 RED = "\033[91m"  # Vermelho
 GREEN = "\033[92m"  # Verde
@@ -382,6 +383,52 @@ class GrafoLista(Grafos):
 
         print(f"Vértice {vertice_origem} - Sequência de visita DFS:", " → ".join(sequencia_dfs))
 
+
+    def dijkstra(self, vertice_origem):
+        # Verifica se o vértice existe no grafo
+        labels = [v['label'] for v in self.grafo_lista]
+        if vertice_origem not in labels:
+            print(f"Vértice {vertice_origem} não está no grafo.")
+            return
+
+        # Inicializa as distâncias como infinito e o vértice de origem como 0
+        distancias = {v['label']: float('inf') for v in self.grafo_lista}
+        distancias[vertice_origem] = 0
+
+        # Predecessores para reconstruir caminho
+        anteriores = {v['label']: None for v in self.grafo_lista}
+
+        # Fila de prioridade (min-heap) com (distância, vértice)
+        fila = [(0, vertice_origem)]
+
+        while fila:
+            dist_atual, atual = heapq.heappop(fila)
+
+            # Procura vizinhos do vértice atual
+            for aresta in self.arestas:
+                origem = aresta['origem']
+                destino = aresta['destino']
+                peso = aresta.get('peso', 1)  # Assume 1 se não tiver peso
+
+                # Verifica conexão considerando se é direcionado ou não
+                if origem == atual:
+                    vizinho = destino
+                elif not self.direcionado and destino == atual:
+                    vizinho = origem
+                else:
+                    continue
+
+                nova_distancia = dist_atual + peso
+                if nova_distancia < distancias[vizinho]:
+                    distancias[vizinho] = nova_distancia
+                    anteriores[vizinho] = atual
+                    heapq.heappush(fila, (nova_distancia, vizinho))
+
+        print(f"Distâncias mínimas a partir do vértice {vertice_origem}:")
+        for v in distancias:
+            print(f"{vertice_origem} → {v}: {distancias[v]}")
+
+
 class GrafoMatriz(Grafos):
     def __init__(self, direcionado=False, ponderado=False):
         super().__init__(direcionado, ponderado)
@@ -571,3 +618,49 @@ class GrafoMatriz(Grafos):
 
         dfs(label_para_indice[vertice_origem])
         print(f"Vértice {vertice_origem} - Sequência de visita DFS:", " → ".join(sequencia_dfs))
+
+    def dijkstra(self, origem):
+        if origem not in self.vertices:
+            print(f"Vértice {origem} não encontrado no grafo.")
+            return
+
+        n = len(self.vertices)
+        distancias = {v: float('inf') for v in self.vertices}
+        origem_idx = self.vertices.index(origem)
+        distancias[origem] = 0
+
+        # Fila de prioridade: (distância, índice do vértice)
+        fila = [(0, origem_idx)]
+        visitados = set()
+        anteriores = {v: None for v in self.vertices}
+
+        while fila:
+            dist_atual, idx_atual = heapq.heappop(fila)
+            vertice_atual = self.vertices[idx_atual]
+
+            if vertice_atual in visitados:
+                continue
+            visitados.add(vertice_atual)
+
+            for vizinho_idx, peso in enumerate(self.grafo_matriz[idx_atual]):
+                if peso > 0:  # existe aresta
+                    vizinho = self.vertices[vizinho_idx]
+                    nova_dist = dist_atual + peso
+                    if nova_dist < distancias[vizinho]:
+                        distancias[vizinho] = nova_dist
+                        anteriores[vizinho] = vertice_atual
+                        heapq.heappush(fila, (nova_dist, vizinho_idx))
+
+        print(f"Menores distâncias a partir do vértice {origem}:")
+        for v in self.vertices:
+            if distancias[v] == float('inf'):
+                print(f"{origem} → {v}: não alcançável")
+            else:
+                # Reconstrói caminho
+                caminho = []
+                atual = v
+                while atual is not None:
+                    caminho.append(atual)
+                    atual = anteriores[atual]
+                caminho.reverse()
+                print(f"{origem} → {v}: distância = {distancias[v]}, caminho = {' → '.join(caminho)}")
