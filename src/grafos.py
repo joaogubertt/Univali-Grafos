@@ -1,4 +1,5 @@
 from collections import deque
+import heapq
 
 RED = "\033[91m"  # Vermelho
 GREEN = "\033[92m"  # Verde
