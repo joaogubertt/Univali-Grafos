@@ -459,7 +459,7 @@ class GrafoLista(Grafos):
                 if cores[v] is not None:
                     continue  # Vértice já colorido
                     
-                # Verifica se a cor atual pode ser usada
+                # Verifica se a cor atual pode ser usada 
                 pode_usar_cor = True
                 vizinhos = self.retornarVizinhos(v)
                 
