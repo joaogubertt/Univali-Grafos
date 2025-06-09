@@ -46,19 +46,22 @@ class Grafos:
         raise NotImplementedError("Método deve ser implementado nas classes filhas")    
 
     @staticmethod
-    def carregar_grafo_arquivo(grafo, caminho_arquivo: str) -> bool:
+    def carregar_grafo_arquivo(grafo, caminho_arquivo: str, batch_size=1000) -> bool:
         """
-        Carrega um grafo a partir de um arquivo de texto no formato especificado.
+        Carrega um grafo a partir de um arquivo de texto no formato especificado,
+        com otimização para arquivos grandes usando processamento em lotes.
         
         Parâmetros:
             grafo: Instância de GrafoLista ou GrafoMatriz
             caminho_arquivo: Caminho para o arquivo de texto
+            batch_size: Número de arestas para processar de uma vez (default=1000)
         
         Returns:
             bool: True se o carregamento foi bem-sucedido, False caso contrário
         """
         try:
             with open(caminho_arquivo, 'r') as arquivo:
+                # Ler e validar cabeçalho
                 primeira_linha = arquivo.readline().strip().split()
                 if len(primeira_linha) < 4:
                     print(f"{RED}Formato de arquivo inválido. Primeira linha deve conter V A D P{RESET}")
@@ -69,6 +72,7 @@ class Grafos:
                 D = int(primeira_linha[2])  # Direcionado (1) ou não (0)
                 P = int(primeira_linha[3])  # Ponderado (1) ou não (0)
                 
+                # Validações de tipo de grafo
                 if D == 1 and not grafo.direcionado:
                     print(f"{RED}Arquivo indica grafo direcionado, mas grafo fornecido não é direcionado{RESET}")
                     return False
@@ -82,37 +86,62 @@ class Grafos:
                     print(f"{RED}Arquivo indica grafo não ponderado, mas grafo fornecido é ponderado{RESET}")
                     return False
                 
-                for i in range(V):
-                    grafo.inserirVertice(str(i))
+                # Otimização 1: Adicionar vértices em lote
+                vertices = [str(i) for i in range(V)]
+                grafo.grafo_lista.extend({"label": v} for v in vertices)
                 
-                for _ in range(A):
-                    linha_aresta = arquivo.readline().strip().split()
+                # Otimização 2: Processar arestas em lotes
+                batch = []
+                contagem = 0
+                
+                for linha in arquivo:
+                    linha_aresta = linha.strip().split()
                     if not linha_aresta:
-                        continue 
+                        continue
                         
                     if P == 1:  # Grafo ponderado
                         if len(linha_aresta) < 3:
-                            print(f"{RED}Formato de aresta inválido para grafo ponderado. Esperado: origem destino peso{RESET}")
+                            print(f"{RED}Formato de aresta inválido para grafo ponderado{RESET}")
                             return False
-                        origem = linha_aresta[0]
-                        destino = linha_aresta[1]
-                        peso = float(linha_aresta[2])
-                        grafo.inserirAresta(origem, destino, peso)
+                        origem, destino, peso = linha_aresta[0], linha_aresta[1], float(linha_aresta[2])
+                        batch.append((origem, destino, peso))
                     else:  # Grafo não ponderado
                         if len(linha_aresta) < 2:
-                            print(f"{RED}Formato de aresta inválido para grafo não ponderado. Esperado: origem destino{RESET}")
+                            print(f"{RED}Formato de aresta inválido para grafo não ponderado{RESET}")
                             return False
-                        origem = linha_aresta[0]
-                        destino = linha_aresta[1]
-                        grafo.inserirAresta(origem, destino)
+                        origem, destino = linha_aresta[0], linha_aresta[1]
+                        batch.append((origem, destino, 1.0))  # Peso padrão 1.0
+                    
+                    contagem += 1
+                    
+                    # Processar em lotes para melhor performance
+                    if len(batch) >= batch_size:
+                        Grafos.processar_batch(grafo, batch, P, D)
+                        batch = []
                 
-                print(f"\n{GREEN}Grafo carregado com sucesso a partir do arquivo: {caminho_arquivo}{RESET}")
+                # Processar último lote (se houver)
+                if batch:
+                    Grafos.processar_batch(grafo, batch, P, D)
+                
+                print(f"\n{GREEN}Grafo carregado com sucesso: {V} vértices, {contagem} arestas{RESET}")
                 return True
                 
         except FileNotFoundError:
             print(f"{RED}Arquivo não encontrado: {caminho_arquivo}{RESET}")
             return False
         except Exception as e:
-            print(f"{RED}Erro ao carregar grafo do arquivo: {e}{RESET}")
+            print(f"{RED}Erro ao carregar grafo: {str(e)}{RESET}")
             return False
 
+    def processar_batch(grafo, batch, ponderado, direcionado):
+        """Função auxiliar para processar um lote de arestas"""
+        for aresta in batch:
+            origem, destino, peso = aresta
+            if ponderado:
+                grafo.arestas.append({"origem": origem, "destino": destino, "peso": peso})
+                if not direcionado:
+                    grafo.arestas.append({"origem": destino, "destino": origem, "peso": peso})
+            else:
+                grafo.arestas.append({"origem": origem, "destino": destino})
+                if not direcionado:
+                    grafo.arestas.append({"origem": destino, "destino": origem})

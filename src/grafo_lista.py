@@ -360,8 +360,9 @@ class GrafoLista(Grafos):
 
         num_vertices = len(self.grafo_lista)
         cores = [0] * num_vertices  # Inicializa todas as cores com 0 (não None)
+        print("passou 1")
         graus = [len(self.retornarVizinhos(i)) for i in range(num_vertices)]
-        
+        print("passou 2")
         # Ordena vértices por grau decrescente
         vertices_ordenados = sorted(range(num_vertices), key=lambda x: -graus[x])
         
@@ -371,6 +372,7 @@ class GrafoLista(Grafos):
             
             for vizinho in vizinhos:
                 vizinho_idx = next(i for i, vert in enumerate(self.grafo_lista) if vert['label'] == vizinho)
+                #print("adicionou")
                 cores_vizinhos.add(cores[vizinho_idx])
             
             # Encontra a menor cor disponível
@@ -382,60 +384,40 @@ class GrafoLista(Grafos):
         return {self.grafo_lista[i]['label']: cores[i] for i in range(num_vertices)}
 
 
-    def coloracao_forca_bruta(self):
-        """
-        Método de força bruta para coloração de grafos.
-        Testa todas as combinações possíveis de cores, começando com 2 cores,
-        até encontrar uma coloração válida (sem vértices adjacentes com a mesma cor).
-        
-        Retorna:
-            tuple: (num_cores, lista_cores, tempo_execucao)
-        """
+    def coloracao_forca_bruta(grafo):
+        """Implementação do método de força bruta para coloração de grafos"""
         inicio = time.time()
-        num_vertices = len(self.grafo_lista)
+        vertices = [v['label'] for v in grafo.grafo_lista]
+        num_vertices = len(vertices)
         
-        # Se não há vértices, retorna vazio
         if num_vertices == 0:
-            return (0, [], 0)
+            return (0, {}, 0.0)
         
-        # Cria mapeamento de labels para índices
-        label_to_index = {v['label']: i for i, v in enumerate(self.grafo_lista)}
-        
-        # Prepara lista de arestas como pares de índices
+        # Converte arestas para índices
         arestas_indices = []
-        for aresta in self.arestas:
-            origem = label_to_index[aresta['origem']]
-            destino = label_to_index[aresta['destino']]
+        for aresta in grafo.arestas:
+            origem = next(i for i, v in enumerate(grafo.grafo_lista) if v['label'] == aresta['origem'])
+            destino = next(i for i, v in enumerate(grafo.grafo_lista) if v['label'] == aresta['destino'])
             arestas_indices.append((origem, destino))
-            if not self.direcionado:
+            if not grafo.direcionado:
                 arestas_indices.append((destino, origem))
         
-        # Testa combinações começando com 2 cores
+        # Testa combinações de cores
         for k in range(1, num_vertices + 1):
-            # Gera todas as possíveis colorações com k cores
             for coloracao in itertools.product(range(k), repeat=num_vertices):
                 valido = True
-                # Verifica se a coloração é válida
                 for origem, destino in arestas_indices:
                     if coloracao[origem] == coloracao[destino]:
                         valido = False
                         break
                 if valido:
-                    fim = time.time()
-                    tempo_execucao = fim - inicio
-                    
-                    # Prepara o resultado no formato {label: cor}
-                    resultado = {self.grafo_lista[i]['label']: coloracao[i] 
-                            for i in range(num_vertices)}
-                    
-                    return (k, resultado, tempo_execucao)
+                    tempo = time.time() - inicio
+                    coloracao_dict = {vertices[i]: coloracao[i] for i in range(num_vertices)}
+                    return (k, coloracao_dict, tempo)
         
-        # Caso extremo (cada vértice com cor diferente)
-        fim = time.time()
-        tempo_execucao = fim - inicio
-        resultado = {self.grafo_lista[i]['label']: i for i in range(num_vertices)}
-        return (num_vertices, resultado, tempo_execucao)
-    
+        tempo = time.time() - inicio
+        return (num_vertices, {v: i for i, v in enumerate(vertices)}, tempo)
+        
 
 
     def welsh_powell(self):
@@ -456,13 +438,13 @@ class GrafoLista(Grafos):
         labels = [v['label'] for v in self.grafo_lista]
         label_to_index = {label: i for i, label in enumerate(labels)}
         num_vertices = len(self.grafo_lista)
-        
+        print("passou 1")
         # 2. Calcula o grau de cada vértice
         graus = []
         for i in range(num_vertices):
             vizinhos = self.retornarVizinhos(i)
             graus.append((i, len(vizinhos)))  # (índice, grau)
-        
+        print("passou 2")
         # 3. Ordena vértices por grau decrescente
         graus.sort(key=lambda x: -x[1])
         vertices_ordenados = [x[0] for x in graus]  # Lista de índices ordenados

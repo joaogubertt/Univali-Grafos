@@ -163,8 +163,9 @@ def main():
     print("="*50)
     
     grafo = GrafoLista(direcionado=False, ponderado=False)
+    Grafos.carregar_grafo_arquivo(grafo, "data/grafos/testes M3/r1000-234-234.txt")
     
-    # Adiciona vértices (um grafo com 7 vértices)
+    """(# Adiciona vértices (um grafo com 7 vértices)
     vertices = [f"V{i}" for i in range(7)]
     for v in vertices:
         grafo.inserirVertice(v)
@@ -180,7 +181,7 @@ def main():
     ]
     
     for origem, destino in arestas:
-        grafo.inserirAresta(origem, destino)
+        grafo.inserirAresta(origem, destino)"""
     
     print("\nGrafo criado com sucesso!")
     
@@ -189,15 +190,26 @@ def main():
     print("EXECUTANDO ALGORITMOS".center(50))
     print("="*50)
     
-    # Welsh-Powell
+        # Welsh-Powell
     inicio_wp = time.time()
     num_cores_wp, coloracao_wp, _ = grafo.welsh_powell()
     tempo_wp = time.time() - inicio_wp
     
     # DSATUR com tratamento seguro
     inicio_ds = time.time()
-    coloracao_ds = grafo.dsatur()
+    coloracao_ds = grafo.gerarHeuristicaAleatoria()
     tempo_ds = time.time() - inicio_ds
+    
+    # Força Bruta (apenas para grafos pequenos)
+    num_cores_fb = -1
+    coloracao_fb = {}
+    tempo_fb = 0.0
+    
+    if len(grafo.grafo_lista) <= 15:  # Limite para força bruta
+        inicio_fb = time.time()
+        num_cores_fb, coloracao_fb, tempo_fb = grafo.coloracao_forca_bruta()
+    else:
+        print(f"\n{RED}Aviso: Força bruta não será executado para grafos com mais de 15 vértices{RESET}")
     
     # Calcula número de cores para DSATUR
     if coloracao_ds:
@@ -220,12 +232,17 @@ def main():
     
     print(f"\n{'Método':<15} | {'Cores':<6} | {'Tempo (s)':<10} | Coloração")
     print("-"*60)
+    
+    # Mostra força bruta apenas se foi executado
+    if num_cores_fb != -1:
+        print(f"{'Força Bruta':<15} | {num_cores_fb:<6} | {tempo_fb:<10.6f} | {coloracao_fb}")
+    
     print(f"{'Welsh-Powell':<15} | {num_cores_wp:<6} | {tempo_wp:<10.6f} | {coloracao_wp}")
     print(f"{'DSATUR':<15} | {num_cores_ds:<6} | {tempo_ds:<10.6f} | {coloracao_ds}")
-
+    
 if __name__ == "__main__":
     main()
-    
+
     '''teste1 = GrafoLista(direcionado=False, ponderado=True)
     Grafos.carregar_grafo_arquivo(teste1, "data/grafos/testes M2/slides.txt")
 
