@@ -18,6 +18,7 @@ class GrafoLista(Grafos):
         self.arestas = []       # Lista de arestas
         self.tipo_representacao = 'lista'
         self.heuristicas = {}  # dicionário de heurísticas
+        self.lista_adjacencia = {}
 
     def labelVertice(self, indice: int) -> str:
         try:
@@ -32,7 +33,7 @@ class GrafoLista(Grafos):
             return False
         else:
             self.grafo_lista.append({"label": label})
-            print("Vértice inserido com sucesso.")
+            #print("Vértice inserido com sucesso.")
             return True
 
     def imprimeGrafo(self) -> None:
@@ -97,7 +98,7 @@ class GrafoLista(Grafos):
                         return False
                     self.arestas.append({"origem": label_origem, "destino": label_destino})
                     self.arestas.append({"origem": label_destino, "destino": label_origem})
-            print(f"{GREEN}Aresta inserida com sucesso. {RESET}")
+            #print(f"{GREEN}Aresta inserida com sucesso. {RESET}")
             return True
 
     def removerVertice(self, indice: int) -> bool:
@@ -210,7 +211,6 @@ class GrafoLista(Grafos):
         except IndexError:
             print(f"{RED} Vértice com índice não existe para retornar vizinhos{RESET}")
             return []
-
 
     def busca_em_largura(self, vertice_origem):
         labels = [v['label'] for v in self.grafo_lista]
@@ -481,3 +481,139 @@ class GrafoLista(Grafos):
         coloracao = {labels[i]: cores[i] for i in range(num_vertices)}
         
         return (cor_atual, coloracao, tempo_execucao)
+    
+
+    def dfs(self, origem, destino, caminho, visitados, grafo_residual):
+        visitados.add(origem)
+        if origem == destino:
+            return True
+
+        for aresta in grafo_residual.arestas:
+            if aresta["origem"] == origem and aresta["peso"] > 0:
+                vizinho = aresta["destino"]
+                if vizinho not in visitados:
+                    caminho[vizinho] = origem
+                    if self.dfs(vizinho, destino, caminho, visitados, grafo_residual):
+                        return True
+        return False
+
+    def copiar_grafo(self):
+        novo_grafo = GrafoLista()
+        novo_grafo.ponderado = self.ponderado
+        novo_grafo.direcionado = True  # Fluxo é sempre direcionado
+
+        for v in self.grafo_lista:
+            novo_grafo.inserirVertice(v["label"])
+
+        for a in self.arestas:
+            origem = a["origem"]
+            destino = a["destino"]
+            peso = a.get("peso", 1)
+            novo_grafo.inserirAresta(origem, destino, peso)
+
+        return novo_grafo
+
+    def ford_fulkerson(self, origem, destino):
+        grafo_residual = self.copiar_grafo()
+        fluxo_maximo = 0
+
+        while True:
+            visitados = set()
+            caminho = {}
+
+            if not self.dfs(origem, destino, caminho, visitados, grafo_residual):
+                break
+
+            # Determina o fluxo possível no caminho aumentante
+            fluxo_caminho = float('inf')
+            v = destino
+            while v != origem:
+                u = caminho[v]
+                for aresta in grafo_residual.arestas:
+                    if aresta["origem"] == u and aresta["destino"] == v:
+                        fluxo_caminho = min(fluxo_caminho, aresta["peso"])
+                        break
+                v = u
+
+            # Atualiza capacidades no grafo residual
+            v = destino
+            while v != origem:
+                u = caminho[v]
+                for aresta in grafo_residual.arestas:
+                    if aresta["origem"] == u and aresta["destino"] == v:
+                        aresta["peso"] -= fluxo_caminho
+                        break
+
+                # Adiciona ou atualiza a aresta reversa
+                reversa_existente = False
+                for aresta in grafo_residual.arestas:
+                    if aresta["origem"] == v and aresta["destino"] == u:
+                        aresta["peso"] += fluxo_caminho
+                        reversa_existente = True
+                        break
+                if not reversa_existente:
+                    grafo_residual.inserirAresta(v, u, fluxo_caminho)
+
+                v = u
+
+            fluxo_maximo += fluxo_caminho
+
+        return fluxo_maximo
+    
+    def busca_local(self, origem, destino):
+        print("\n=== Iniciando Busca Local ===")
+        fluxo_original = self.ford_fulkerson(origem, destino)
+        melhor_fluxo = fluxo_original
+        passos = 0
+
+        # Cópia da configuração original das arestas
+        melhor_arestas = list(self.arestas)
+
+        melhoria = True
+
+        while melhoria:
+            melhoria = False
+            for i in range(len(melhor_arestas)):
+                # Copia as arestas atuais
+                vizinho_arestas = list(melhor_arestas)
+
+                aresta = vizinho_arestas[i]
+
+                # Evita self-loop
+                if aresta["origem"] == aresta["destino"]:
+                    continue
+
+                # Inverte a aresta
+                aresta_invertida = {
+                    "origem": aresta["destino"],
+                    "destino": aresta["origem"],
+                    "peso": aresta["peso"]
+                }
+
+                # Verifica se já existe essa aresta invertida
+                if any(a["origem"] == aresta_invertida["origem"] and a["destino"] == aresta_invertida["destino"] for a in vizinho_arestas):
+                    continue
+
+                # Substitui a aresta pela invertida
+                vizinho_arestas[i] = aresta_invertida
+
+                # Testa fluxo máximo nesse vizinho
+                self.arestas = vizinho_arestas
+                fluxo_vizinho = self.ford_fulkerson(origem, destino)
+                passos += 1
+
+                # Se melhorou, salva e continua
+                if fluxo_vizinho > melhor_fluxo:
+                    print(f"Passo {passos}: melhoria encontrada! Fluxo = {fluxo_vizinho}")
+                    melhor_fluxo = fluxo_vizinho
+                    melhor_arestas = list(vizinho_arestas)
+                    melhoria = True
+                    break  # Reinicia a busca a partir dessa configuração melhorada
+
+            self.arestas = melhor_arestas  # atualiza para a melhor até aqui
+
+        print(f"\nFluxo original: {fluxo_original}")
+        print(f"Fluxo após busca local: {melhor_fluxo}")
+        print(f"Número de passos: {passos}")
+
+

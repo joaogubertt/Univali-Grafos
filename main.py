@@ -157,7 +157,7 @@ import time
 RED = "\033[91m"
 RESET = "\033[0m"
 
-def main():
+def m2():
     print("="*50)
     print("TESTE DE COLORAÇÃO DE GRAFOS".center(50))
     print("="*50)
@@ -239,13 +239,61 @@ def main():
     
     print(f"{'Welsh-Powell':<15} | {num_cores_wp:<6} | {tempo_wp:<10.6f} | {coloracao_wp}")
     print(f"{'DSATUR':<15} | {num_cores_ds:<6} | {tempo_ds:<10.6f} | {coloracao_ds}")
-    
+
+def main2():
+    g = GrafoLista()
+    g.ponderado = True
+    g.direcionado = True
+
+    # Inserção de vértices
+    g.inserirVertice("S")
+    g.inserirVertice("A")
+    g.inserirVertice("B")
+    g.inserirVertice("C")
+    g.inserirVertice("D")
+    g.inserirVertice("T")
+
+    # Inserção de arestas com capacidade (peso)
+    g.inserirAresta("S", "A", 16)
+    g.inserirAresta("S", "C", 13)
+    g.inserirAresta("A", "B", 12)
+    g.inserirAresta("B", "C", 9)
+    g.inserirAresta("C", "A", 4)
+    g.inserirAresta("B", "T", 20)
+    g.inserirAresta("C", "D", 14)
+    g.inserirAresta("D", "B", 7)
+    g.inserirAresta("D", "T", 4)
+
+    # Cálculo do fluxo máximo de S para T
+    fluxo_maximo = g.ford_fulkerson("S", "T")
+    print(f"\nFluxo máximo original: {fluxo_maximo}")
+
+    # Busca local para tentar otimizar o fluxo
+    g.busca_local("S", "T")
+
+def main():
+    g = GrafoLista(direcionado=True, ponderado=True)
+    if not Grafos.carregar_grafo_arquivo(g, "data/grafos/teste M4/Instancias_2/medium_graph_v70_reversed_maxflow134.txt "):
+        print("Falha ao carregar o grafo")
+        return
+
+    print("Grafo carregado com sucesso!")
+    # Verifica vértices existentes
+    vertices = [v['label'] for v in g.grafo_lista]
+    print("Vértices disponíveis:", vertices)
+
+    # Define origem e destino existentes (substitua por vértices válidos)
+    origem = "0"  # Exemplo: usar o vértice 0 como source
+    destino = g.grafo_lista[-1]["label"]  # Pega o label do último vértice
+
+    # Cálculo do fluxo máximo
+    print(f"\nCalculando fluxo máximo de {origem} para {destino}...")
+    fluxo_maximo = g.ford_fulkerson(origem, destino)
+    print(f"Fluxo máximo original: {fluxo_maximo}")
+
+    # Busca local para tentar otimizar o fluxo
+    print("\nIniciando busca local...")
+    g.busca_local(origem, destino)
+
 if __name__ == "__main__":
     main()
-
-    '''teste1 = GrafoLista(direcionado=False, ponderado=True)
-    Grafos.carregar_grafo_arquivo(teste1, "data/grafos/testes M2/slides.txt")
-
-    teste1.busca_em_largura("4")
-    teste1.busca_em_profundidade("4")
-    teste1.dijkstra("4")'''
