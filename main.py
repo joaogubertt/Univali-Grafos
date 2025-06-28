@@ -1,126 +1,59 @@
-from src.grafos import Grafos, GrafoMatriz, GrafoLista
- 
+import time
+from src.grafo_funcs import Grafo
+from src.grafos import Grafos  # se a função carregar_grafo_arquivo estiver aqui
+
 def main():
-
-    print("""
-          
-░█▀▀█ ░█▀▀█ ▀█▀ ░█▀▄▀█ ░█▀▀▀ ▀█▀ ░█▀▀█ ░█▀▀▀█ 　 ░█▀▀█ ░█▀▀█ ─█▀▀█ ░█▀▀▀ ░█▀▀▀█ 
-░█▄▄█ ░█▄▄▀ ░█─ ░█░█░█ ░█▀▀▀ ░█─ ░█▄▄▀ ░█──░█ 　 ░█─▄▄ ░█▄▄▀ ░█▄▄█ ░█▀▀▀ ░█──░█ 
-░█─── ░█─░█ ▄█▄ ░█──░█ ░█▄▄▄ ▄█▄ ░█─░█ ░█▄▄▄█ 　 ░█▄▄█ ░█─░█ ░█─░█ ░█─── ░█▄▄▄█""")
+    # Testes com Prim
+    print("==== Teste PRIM com grafo_prim.txt ====")
+    grafo_prim1 = Grafo(ponderado=True, direcionado=False)
     
-    print("______________________________\n")
-    grafo_teste_01 = GrafoLista(direcionado=False, ponderado=False)
-    Grafos.carregar_grafo_arquivo(grafo_teste_01, "data/grafos/grafo_teste_01.txt")
-    print("______________________________")
+    if Grafos.carregar_grafo_arquivo(grafo_prim1, "data/grafos/testes T5/grafo_prim.txt"):
+        inicio = time.time()
+        arestas_prim1, custo_prim1, tempo_prim1 = grafo_prim1.prim("0")
+        fim = time.time()
+        print(f"\nCusto total da Árvore Geradora Mínima (Prim): {custo_prim1}")
+        print(f"Tempo de execução: {fim - inicio:.6f} segundos\n")
 
-    print("\nBuscas:\n")
-    grafo_teste_01.busca_em_largura("0")
-    grafo_teste_01.busca_em_largura("1")
-    grafo_teste_01.busca_em_largura("2")
-    print("-")
-    grafo_teste_01.busca_em_profundidade("0")
-    grafo_teste_01.busca_em_profundidade("1")
-    grafo_teste_01.busca_em_profundidade("2")
-    print("-")
-    grafo_teste_01.dijkstra("0")
-
-    print("\n")
-
-    print("""
-
-░█▀▀▀█ ░█▀▀▀ ░█▀▀█ ░█─░█ ░█▄─░█ ░█▀▀▄ ░█▀▀▀█ 　 ░█▀▀█ ░█▀▀█ ─█▀▀█ ░█▀▀▀ ░█▀▀▀█ 
-─▀▀▀▄▄ ░█▀▀▀ ░█─▄▄ ░█─░█ ░█░█░█ ░█─░█ ░█──░█ 　 ░█─▄▄ ░█▄▄▀ ░█▄▄█ ░█▀▀▀ ░█──░█ 
-░█▄▄▄█ ░█▄▄▄ ░█▄▄█ ─▀▄▄▀ ░█──▀█ ░█▄▄▀ ░█▄▄▄█ 　 ░█▄▄█ ░█─░█ ░█─░█ ░█─── ░█▄▄▄█""")
+    print("==== Teste PRIM com grafo_prim_grande.txt ====")
+    grafo_prim2 = Grafo(ponderado=True, direcionado=False)
     
-    print("______________________________\n")
-    grafo_teste_02 = GrafoLista(direcionado=True, ponderado=True)
-    Grafos.carregar_grafo_arquivo(grafo_teste_02, "data/grafos/grafo_teste_02.txt")
-    print("______________________________")
+    if Grafos.carregar_grafo_arquivo(grafo_prim2, "data/grafos/testes T5/grafo_prim_grande.txt"):
+        inicio = time.time()
+        arestas_prim2, custo_prim2, tempo_prim2 = grafo_prim2.prim("0")
+        fim = time.time()
+        print(f"\nCusto total da Árvore Geradora Mínima (Prim): {custo_prim2}")
+        print(f"Tempo de execução: {fim - inicio:.6f} segundos\n")
 
-    print("\nBuscas:\n")
-    grafo_teste_02.busca_em_largura("0")
-    grafo_teste_02.busca_em_largura("1")
-    grafo_teste_02.busca_em_largura("2")
-    grafo_teste_02.busca_em_largura("3")
-    print("-")
-    grafo_teste_02.busca_em_profundidade("0")
-    grafo_teste_02.busca_em_profundidade("1")
-    grafo_teste_02.busca_em_profundidade("2")
-    grafo_teste_02.busca_em_profundidade("3")
-    print("-")
-    grafo_teste_02.dijkstra("0")
-    grafo_teste_02.dijkstra("1")
-    grafo_teste_02.dijkstra("2")
-    grafo_teste_02.dijkstra("3")
-    grafo_teste_02.dijkstra("4")
-
-    print("\n")
-
-    print("""
-          
-▀▀█▀▀ ░█▀▀▀ ░█▀▀█ ░█▀▀█ ░█▀▀▀ ▀█▀ ░█▀▀█ ░█▀▀▀█ 　 ░█▀▀█ ░█▀▀█ ─█▀▀█ ░█▀▀▀ ░█▀▀▀█ 
-─░█── ░█▀▀▀ ░█▄▄▀ ░█─── ░█▀▀▀ ░█─ ░█▄▄▀ ░█──░█ 　 ░█─▄▄ ░█▄▄▀ ░█▄▄█ ░█▀▀▀ ░█──░█ 
-─░█── ░█▄▄▄ ░█─░█ ░█▄▄█ ░█▄▄▄ ▄█▄ ░█─░█ ░█▄▄▄█ 　 ░█▄▄█ ░█─░█ ░█─░█ ░█─── ░█▄▄▄█""")
+    # Testes com Kruskal
+    print("\n==== Teste KRUSKAL com grafo_prim.txt ====")
+    grafo_kruskal1 = Grafo(ponderado=True, direcionado=False)
     
-    print("______________________________\n")
-    grafo_teste_03 = GrafoMatriz(direcionado=False, ponderado=False)
-    Grafos.carregar_grafo_arquivo(grafo_teste_03, "data/grafos/grafo_teste_03.txt")
-    print("______________________________")
+    if Grafos.carregar_grafo_arquivo(grafo_kruskal1, "data/grafos/testes T5/grafo_prim.txt"):
+        inicio = time.time()
+        arestas_kruskal1, custo_kruskal1, tempo_kruskal1 = grafo_kruskal1.kruskal()
+        fim = time.time()
+        print(f"\nCusto total da Árvore Geradora Mínima (Kruskal): {custo_kruskal1}")
+        print(f"Tempo de execução: {fim - inicio:.6f} segundos\n")
 
-    print("\nBuscas:\n")
-    grafo_teste_03.busca_em_largura("0")
-    grafo_teste_03.busca_em_largura("1")
-    grafo_teste_03.busca_em_largura("2")
-    grafo_teste_03.busca_em_largura("3")
-    grafo_teste_03.busca_em_largura("4")
-    print("-")
-    grafo_teste_03.busca_em_profundidade("0")
-    grafo_teste_03.busca_em_profundidade("1")
-    grafo_teste_03.busca_em_profundidade("2")
-    grafo_teste_03.busca_em_profundidade("3")
-    grafo_teste_03.busca_em_profundidade("4")
-    print("-")
-    grafo_teste_03.dijkstra("0")
-    grafo_teste_03.dijkstra("1")
-    grafo_teste_03.dijkstra("2")
-    grafo_teste_03.dijkstra("3")
-    grafo_teste_03.dijkstra("4")
+    print("==== Teste KRUSKAL com grafo_prim_grande.txt ====")
+    grafo_kruskal2 = Grafo(ponderado=True, direcionado=False)
     
+    if Grafos.carregar_grafo_arquivo(grafo_kruskal2, "data/grafos/testes T5/grafo_prim_grande.txt"):
+        inicio = time.time()
+        arestas_kruskal2, custo_kruskal2, tempo_kruskal2 = grafo_kruskal2.kruskal()
+        fim = time.time()
+        print(f"\nCusto total da Árvore Geradora Mínima (Kruskal): {custo_kruskal2}")
+        print(f"Tempo de execução: {fim - inicio:.6f} segundos\n")
 
-    print("\n")
-
-    print("""
-          
-
-░█▀▀█ ░█─░█ ─█▀▀█ ░█▀▀█ ▀▀█▀▀ ░█▀▀▀█ 　 ░█▀▀█ ░█▀▀█ ─█▀▀█ ░█▀▀▀ ░█▀▀▀█ 
-░█─░█ ░█─░█ ░█▄▄█ ░█▄▄▀ ─░█── ░█──░█ 　 ░█─▄▄ ░█▄▄▀ ░█▄▄█ ░█▀▀▀ ░█──░█ 
-─▀▀█▄ ─▀▄▄▀ ░█─░█ ░█─░█ ─░█── ░█▄▄▄█ 　 ░█▄▄█ ░█─░█ ░█─░█ ░█─── ░█▄▄▄█""")
+    # Comparação dos resultados
+    print("\n==== Comparação dos Algoritmos ====")
+    if 'custo_prim1' in locals() and 'custo_kruskal1' in locals():
+        print(f"Grafo pequeno - Prim: {custo_prim1} | Kruskal: {custo_kruskal1}")
+        print(f"Tempo Prim: {tempo_prim1:.6f} vs Kruskal: {tempo_kruskal1:.6f}")
     
-    print("______________________________\n")
-    grafo_teste_04 = GrafoLista(direcionado=False, ponderado=False)
-    Grafos.carregar_grafo_arquivo(grafo_teste_04, "data/grafos/grafo_teste_04.txt")
-    print("______________________________")
+    if 'custo_prim2' in locals() and 'custo_kruskal2' in locals():
+        print(f"\nGrafo grande - Prim: {custo_prim2} | Kruskal: {custo_kruskal2}")
+        print(f"Tempo Prim: {tempo_prim2:.6f} vs Kruskal: {tempo_kruskal2:.6f}")
 
-    print("\nBuscas:\n")
-    grafo_teste_04.busca_em_largura("0")
-    grafo_teste_04.busca_em_largura("1")
-    grafo_teste_04.busca_em_largura("2")
-    grafo_teste_04.busca_em_largura("3")
-    grafo_teste_04.busca_em_largura("4")
-    print("-")
-    grafo_teste_04.busca_em_profundidade("0")
-    grafo_teste_04.busca_em_profundidade("1")
-    grafo_teste_04.busca_em_profundidade("2")
-    grafo_teste_04.busca_em_profundidade("3")
-    grafo_teste_04.busca_em_profundidade("4")
-    print("-")
-    grafo_teste_04.dijkstra("0")
-    grafo_teste_04.dijkstra("1")
-    grafo_teste_04.dijkstra("2")
-    grafo_teste_04.dijkstra("3")
-    grafo_teste_04.dijkstra("4")
-
-    print("\n")
-    
 if __name__ == "__main__":
     main()
