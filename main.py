@@ -1,299 +1,59 @@
-from src.grafos import Grafos
-from src.grafo_matriz import GrafoMatriz
-from src.grafo_lista import GrafoLista
-from src.grafos import Grafos
-from src.grafo_matriz import GrafoMatriz
-from src.grafo_lista import GrafoLista
- 
-def m1():
-
-    print("""
-          
-░█▀▀█ ░█▀▀█ ▀█▀ ░█▀▄▀█ ░█▀▀▀ ▀█▀ ░█▀▀█ ░█▀▀▀█ 　 ░█▀▀█ ░█▀▀█ ─█▀▀█ ░█▀▀▀ ░█▀▀▀█ 
-░█▄▄█ ░█▄▄▀ ░█─ ░█░█░█ ░█▀▀▀ ░█─ ░█▄▄▀ ░█──░█ 　 ░█─▄▄ ░█▄▄▀ ░█▄▄█ ░█▀▀▀ ░█──░█ 
-░█─── ░█─░█ ▄█▄ ░█──░█ ░█▄▄▄ ▄█▄ ░█─░█ ░█▄▄▄█ 　 ░█▄▄█ ░█─░█ ░█─░█ ░█─── ░█▄▄▄█""")
-    
-    print("______________________________\n")
-    grafo_teste_01 = GrafoLista(direcionado=False, ponderado=False)
-    Grafos.carregar_grafo_arquivo(grafo_teste_01, "data/grafos/testes M2/grafo_teste_01.txt")
-    Grafos.carregar_grafo_arquivo(grafo_teste_01, "data/grafos/testes M2/grafo_teste_01.txt")
-    print("______________________________")
-
-    print("\nBuscas:\n")
-    grafo_teste_01.busca_em_largura("0")
-    grafo_teste_01.busca_em_largura("1")
-    grafo_teste_01.busca_em_largura("2")
-    print("-")
-    grafo_teste_01.busca_em_profundidade("0")
-    grafo_teste_01.busca_em_profundidade("1")
-    grafo_teste_01.busca_em_profundidade("2")
-    print("-")
-    grafo_teste_01.dijkstra("0")
-    print("-")
-    grafo_teste_01.dijkstra("0")
-
-    print("\n")
-
-    print("""
-
-░█▀▀▀█ ░█▀▀▀ ░█▀▀█ ░█─░█ ░█▄─░█ ░█▀▀▄ ░█▀▀▀█ 　 ░█▀▀█ ░█▀▀█ ─█▀▀█ ░█▀▀▀ ░█▀▀▀█ 
-─▀▀▀▄▄ ░█▀▀▀ ░█─▄▄ ░█─░█ ░█░█░█ ░█─░█ ░█──░█ 　 ░█─▄▄ ░█▄▄▀ ░█▄▄█ ░█▀▀▀ ░█──░█ 
-░█▄▄▄█ ░█▄▄▄ ░█▄▄█ ─▀▄▄▀ ░█──▀█ ░█▄▄▀ ░█▄▄▄█ 　 ░█▄▄█ ░█─░█ ░█─░█ ░█─── ░█▄▄▄█""")
-    
-    print("______________________________\n")
-    grafo_teste_02 = GrafoLista(direcionado=True, ponderado=True)
-    Grafos.carregar_grafo_arquivo(grafo_teste_02, "data/grafos/testes M2/grafo_teste_02.txt")
-    Grafos.carregar_grafo_arquivo(grafo_teste_02, "data/grafos/testes M2/grafo_teste_02.txt")
-    print("______________________________")
-
-    print("\nBuscas:\n")
-    grafo_teste_02.busca_em_largura("0")
-    grafo_teste_02.busca_em_largura("1")
-    grafo_teste_02.busca_em_largura("2")
-    grafo_teste_02.busca_em_largura("3")
-    print("-")
-    grafo_teste_02.busca_em_profundidade("0")
-    grafo_teste_02.busca_em_profundidade("1")
-    grafo_teste_02.busca_em_profundidade("2")
-    grafo_teste_02.busca_em_profundidade("3")
-    print("-")
-    grafo_teste_02.dijkstra("0")
-    grafo_teste_02.dijkstra("1")
-    grafo_teste_02.dijkstra("2")
-    grafo_teste_02.dijkstra("3")
-    grafo_teste_02.dijkstra("4")
-    print("-")
-    grafo_teste_02.dijkstra("0")
-    grafo_teste_02.dijkstra("1")
-    grafo_teste_02.dijkstra("2")
-    grafo_teste_02.dijkstra("3")
-    grafo_teste_02.dijkstra("4")
-
-    print("\n")
-
-    print("""
-          
-▀▀█▀▀ ░█▀▀▀ ░█▀▀█ ░█▀▀█ ░█▀▀▀ ▀█▀ ░█▀▀█ ░█▀▀▀█ 　 ░█▀▀█ ░█▀▀█ ─█▀▀█ ░█▀▀▀ ░█▀▀▀█ 
-─░█── ░█▀▀▀ ░█▄▄▀ ░█─── ░█▀▀▀ ░█─ ░█▄▄▀ ░█──░█ 　 ░█─▄▄ ░█▄▄▀ ░█▄▄█ ░█▀▀▀ ░█──░█ 
-─░█── ░█▄▄▄ ░█─░█ ░█▄▄█ ░█▄▄▄ ▄█▄ ░█─░█ ░█▄▄▄█ 　 ░█▄▄█ ░█─░█ ░█─░█ ░█─── ░█▄▄▄█""")
-    
-    print("______________________________\n")
-    grafo_teste_03 = GrafoMatriz(direcionado=False, ponderado=False)
-    Grafos.carregar_grafo_arquivo(grafo_teste_03, "data/grafos/testes M2/grafo_teste_03.txt")
-    Grafos.carregar_grafo_arquivo(grafo_teste_03, "data/grafos/testes M2/grafo_teste_03.txt")
-    print("______________________________")
-
-    print("\nBuscas:\n")
-    grafo_teste_03.busca_em_largura("0")
-    grafo_teste_03.busca_em_largura("1")
-    grafo_teste_03.busca_em_largura("2")
-    grafo_teste_03.busca_em_largura("3")
-    grafo_teste_03.busca_em_largura("4")
-    print("-")
-    grafo_teste_03.busca_em_profundidade("0")
-    grafo_teste_03.busca_em_profundidade("1")
-    grafo_teste_03.busca_em_profundidade("2")
-    grafo_teste_03.busca_em_profundidade("3")
-    grafo_teste_03.busca_em_profundidade("4")
-    print("-")
-    grafo_teste_03.dijkstra("0")
-    grafo_teste_03.dijkstra("1")
-    grafo_teste_03.dijkstra("2")
-    grafo_teste_03.dijkstra("3")
-    grafo_teste_03.dijkstra("4")
-    
-    print("-")
-    grafo_teste_03.dijkstra("0")
-    grafo_teste_03.dijkstra("1")
-    grafo_teste_03.dijkstra("2")
-    grafo_teste_03.dijkstra("3")
-    grafo_teste_03.dijkstra("4")
-    
-
-    print("\n")
-
-    print("""
-          
-
-░█▀▀█ ░█─░█ ─█▀▀█ ░█▀▀█ ▀▀█▀▀ ░█▀▀▀█ 　 ░█▀▀█ ░█▀▀█ ─█▀▀█ ░█▀▀▀ ░█▀▀▀█ 
-░█─░█ ░█─░█ ░█▄▄█ ░█▄▄▀ ─░█── ░█──░█ 　 ░█─▄▄ ░█▄▄▀ ░█▄▄█ ░█▀▀▀ ░█──░█ 
-─▀▀█▄ ─▀▄▄▀ ░█─░█ ░█─░█ ─░█── ░█▄▄▄█ 　 ░█▄▄█ ░█─░█ ░█─░█ ░█─── ░█▄▄▄█""")
-    
-    print("______________________________\n")
-    grafo_teste_04 = GrafoLista(direcionado=False, ponderado=False)
-    Grafos.carregar_grafo_arquivo(grafo_teste_04, "data/grafos/testes M2/grafo_teste_04.txt")
-    Grafos.carregar_grafo_arquivo(grafo_teste_04, "data/grafos/testes M2/grafo_teste_04.txt")
-    print("______________________________")
-
-    print("\nBuscas:\n")
-    grafo_teste_04.busca_em_largura("0")
-    grafo_teste_04.busca_em_largura("1")
-    grafo_teste_04.busca_em_largura("2")
-    grafo_teste_04.busca_em_largura("3")
-    grafo_teste_04.busca_em_largura("4")
-    print("-")
-    grafo_teste_04.busca_em_profundidade("0")
-    grafo_teste_04.busca_em_profundidade("1")
-    grafo_teste_04.busca_em_profundidade("2")
-    grafo_teste_04.busca_em_profundidade("3")
-    grafo_teste_04.busca_em_profundidade("4")
-    print("-")
-    grafo_teste_04.dijkstra("0")
-    grafo_teste_04.dijkstra("1")
-    grafo_teste_04.dijkstra("2")
-    grafo_teste_04.dijkstra("3")
-    grafo_teste_04.dijkstra("4")
-    print("-")
-    grafo_teste_04.dijkstra("0")
-    grafo_teste_04.dijkstra("1")
-    grafo_teste_04.dijkstra("2")
-    grafo_teste_04.dijkstra("3")
-    grafo_teste_04.dijkstra("4")
-
-    print("\n")
-
 import time
-
-RED = "\033[91m"
-RESET = "\033[0m"
-
-def m2():
-    print("="*50)
-    print("TESTE DE COLORAÇÃO DE GRAFOS".center(50))
-    print("="*50)
-    
-    grafo = GrafoLista(direcionado=False, ponderado=False)
-    Grafos.carregar_grafo_arquivo(grafo, "data/grafos/testes M3/r1000-234-234.txt")
-    
-    """(# Adiciona vértices (um grafo com 7 vértices)
-    vertices = [f"V{i}" for i in range(7)]
-    for v in vertices:
-        grafo.inserirVertice(v)
-    
-    # Adiciona arestas (grafo planar)
-    arestas = [
-        ("V0", "V1"), ("V0", "V2"), ("V0", "V3"),
-        ("V1", "V2"), ("V1", "V4"),
-        ("V2", "V3"), ("V2", "V5"),
-        ("V3", "V5"), ("V3", "V6"),
-        ("V4", "V5"), 
-        ("V5", "V6")
-    ]
-    
-    for origem, destino in arestas:
-        grafo.inserirAresta(origem, destino)"""
-    
-    print("\nGrafo criado com sucesso!")
-    
-    # Execução dos algoritmos
-    print("\n" + "="*50)
-    print("EXECUTANDO ALGORITMOS".center(50))
-    print("="*50)
-    
-        # Welsh-Powell
-    inicio_wp = time.time()
-    num_cores_wp, coloracao_wp, _ = grafo.welsh_powell()
-    tempo_wp = time.time() - inicio_wp
-    
-    # DSATUR com tratamento seguro
-    inicio_ds = time.time()
-    coloracao_ds = grafo.gerarHeuristicaAleatoria()
-    tempo_ds = time.time() - inicio_ds
-    
-    # Força Bruta (apenas para grafos pequenos)
-    num_cores_fb = -1
-    coloracao_fb = {}
-    tempo_fb = 0.0
-    
-    if len(grafo.grafo_lista) <= 15:  # Limite para força bruta
-        inicio_fb = time.time()
-        num_cores_fb, coloracao_fb, tempo_fb = grafo.coloracao_forca_bruta()
-    else:
-        print(f"\n{RED}Aviso: Força bruta não será executado para grafos com mais de 15 vértices{RESET}")
-    
-    # Calcula número de cores para DSATUR
-    if coloracao_ds:
-        try:
-            num_cores_ds = max(coloracao_ds.values()) + 1
-        except ValueError:
-            print(f"{RED}Erro: DSATUR retornou coloração vazia{RESET}")
-            num_cores_ds = 0
-        except TypeError:
-            print(f"{RED}Erro: Valores de cor inválidos no DSATUR{RESET}")
-            num_cores_ds = -1
-    else:
-        print(f"{RED}Erro: DSATUR não retornou coloração{RESET}")
-        num_cores_ds = -1
-    
-    # Exibição dos resultados
-    print("\n" + "="*50)
-    print("RESULTADOS".center(50))
-    print("="*50)
-    
-    print(f"\n{'Método':<15} | {'Cores':<6} | {'Tempo (s)':<10} | Coloração")
-    print("-"*60)
-    
-    # Mostra força bruta apenas se foi executado
-    if num_cores_fb != -1:
-        print(f"{'Força Bruta':<15} | {num_cores_fb:<6} | {tempo_fb:<10.6f} | {coloracao_fb}")
-    
-    print(f"{'Welsh-Powell':<15} | {num_cores_wp:<6} | {tempo_wp:<10.6f} | {coloracao_wp}")
-    print(f"{'DSATUR':<15} | {num_cores_ds:<6} | {tempo_ds:<10.6f} | {coloracao_ds}")
-
-def main2():
-    g = GrafoLista()
-    g.ponderado = True
-    g.direcionado = True
-
-    # Inserção de vértices
-    g.inserirVertice("S")
-    g.inserirVertice("A")
-    g.inserirVertice("B")
-    g.inserirVertice("C")
-    g.inserirVertice("D")
-    g.inserirVertice("T")
-
-    # Inserção de arestas com capacidade (peso)
-    g.inserirAresta("S", "A", 16)
-    g.inserirAresta("S", "C", 13)
-    g.inserirAresta("A", "B", 12)
-    g.inserirAresta("B", "C", 9)
-    g.inserirAresta("C", "A", 4)
-    g.inserirAresta("B", "T", 20)
-    g.inserirAresta("C", "D", 14)
-    g.inserirAresta("D", "B", 7)
-    g.inserirAresta("D", "T", 4)
-
-    # Cálculo do fluxo máximo de S para T
-    fluxo_maximo = g.ford_fulkerson("S", "T")
-    print(f"\nFluxo máximo original: {fluxo_maximo}")
-
-    # Busca local para tentar otimizar o fluxo
-    g.busca_local("S", "T")
+from src.grafo_funcs import Grafo
+from src.grafos import Grafos  # se a função carregar_grafo_arquivo estiver aqui
 
 def main():
-    g = GrafoLista(direcionado=True, ponderado=True)
-    if not Grafos.carregar_grafo_arquivo(g, "data/grafos/teste M4/Instancias_2/medium_graph_v70_reversed_maxflow134.txt "):
-        print("Falha ao carregar o grafo")
-        return
+    # Testes com Prim
+    print("==== Teste PRIM com grafo_prim.txt ====")
+    grafo_prim1 = Grafo(ponderado=True, direcionado=False)
+    
+    if Grafos.carregar_grafo_arquivo(grafo_prim1, "data/grafos/testes T5/grafo_prim.txt"):
+        inicio = time.time()
+        arestas_prim1, custo_prim1, tempo_prim1 = grafo_prim1.prim("0")
+        fim = time.time()
+        print(f"\nCusto total da Árvore Geradora Mínima (Prim): {custo_prim1}")
+        print(f"Tempo de execução: {fim - inicio:.6f} segundos\n")
 
-    print("Grafo carregado com sucesso!")
-    # Verifica vértices existentes
-    vertices = [v['label'] for v in g.grafo_lista]
-    print("Vértices disponíveis:", vertices)
+    print("==== Teste PRIM com grafo_prim_grande.txt ====")
+    grafo_prim2 = Grafo(ponderado=True, direcionado=False)
+    
+    if Grafos.carregar_grafo_arquivo(grafo_prim2, "data/grafos/testes T5/grafo_prim_grande.txt"):
+        inicio = time.time()
+        arestas_prim2, custo_prim2, tempo_prim2 = grafo_prim2.prim("0")
+        fim = time.time()
+        print(f"\nCusto total da Árvore Geradora Mínima (Prim): {custo_prim2}")
+        print(f"Tempo de execução: {fim - inicio:.6f} segundos\n")
 
-    # Define origem e destino existentes (substitua por vértices válidos)
-    origem = "0"  # Exemplo: usar o vértice 0 como source
-    destino = g.grafo_lista[-1]["label"]  # Pega o label do último vértice
+    # Testes com Kruskal
+    print("\n==== Teste KRUSKAL com grafo_prim.txt ====")
+    grafo_kruskal1 = Grafo(ponderado=True, direcionado=False)
+    
+    if Grafos.carregar_grafo_arquivo(grafo_kruskal1, "data/grafos/testes T5/grafo_prim.txt"):
+        inicio = time.time()
+        arestas_kruskal1, custo_kruskal1, tempo_kruskal1 = grafo_kruskal1.kruskal()
+        fim = time.time()
+        print(f"\nCusto total da Árvore Geradora Mínima (Kruskal): {custo_kruskal1}")
+        print(f"Tempo de execução: {fim - inicio:.6f} segundos\n")
 
-    # Cálculo do fluxo máximo
-    print(f"\nCalculando fluxo máximo de {origem} para {destino}...")
-    fluxo_maximo = g.ford_fulkerson(origem, destino)
-    print(f"Fluxo máximo original: {fluxo_maximo}")
+    print("==== Teste KRUSKAL com grafo_prim_grande.txt ====")
+    grafo_kruskal2 = Grafo(ponderado=True, direcionado=False)
+    
+    if Grafos.carregar_grafo_arquivo(grafo_kruskal2, "data/grafos/testes T5/grafo_prim_grande.txt"):
+        inicio = time.time()
+        arestas_kruskal2, custo_kruskal2, tempo_kruskal2 = grafo_kruskal2.kruskal()
+        fim = time.time()
+        print(f"\nCusto total da Árvore Geradora Mínima (Kruskal): {custo_kruskal2}")
+        print(f"Tempo de execução: {fim - inicio:.6f} segundos\n")
 
-    # Busca local para tentar otimizar o fluxo
-    print("\nIniciando busca local...")
-    g.busca_local(origem, destino)
+    # Comparação dos resultados
+    print("\n==== Comparação dos Algoritmos ====")
+    if 'custo_prim1' in locals() and 'custo_kruskal1' in locals():
+        print(f"Grafo pequeno - Prim: {custo_prim1} | Kruskal: {custo_kruskal1}")
+        print(f"Tempo Prim: {tempo_prim1:.6f} vs Kruskal: {tempo_kruskal1:.6f}")
+    
+    if 'custo_prim2' in locals() and 'custo_kruskal2' in locals():
+        print(f"\nGrafo grande - Prim: {custo_prim2} | Kruskal: {custo_kruskal2}")
+        print(f"Tempo Prim: {tempo_prim2:.6f} vs Kruskal: {tempo_kruskal2:.6f}")
 
 if __name__ == "__main__":
     main()
